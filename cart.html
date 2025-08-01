@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>سلة المشتريات - TryNavy</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .cart-container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    .btn-remove {
+      color: red;
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+    .btn-send {
+      display: block;
+      margin-top: 20px;
+      background: #001f3f;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 5px;
+      text-align: center;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="cart-container">
+    <h2>🛒 سلة المشتريات</h2>
+    <div id="cart-items"></div>
+    <a href="#" class="btn-send" id="send-whatsapp" target="_blank">إرسال الطلب عبر واتساب</a>
+  </div>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartDiv = document.getElementById('cart-items');
+    let message = 'مرحباً، أود طلب المنتجات التالية:%0A';
+
+    if (cart.length === 0) {
+      cartDiv.innerHTML = '<p>السلة فارغة.</p>';
+      document.getElementById('send-whatsapp').style.display = 'none';
+    } else {
+      cart.forEach((item, index) => {
+        cartDiv.innerHTML += `
+          <div class="cart-item">
+            <span>${item.name} × ${item.qty} = KD ${(item.price * item.qty).toFixed(3)}</span>
+            <button class="btn-remove" onclick="removeItem(${index})">حذف</button>
+          </div>`;
+        message += `- ${item.name} × ${item.qty} = KD ${(item.price * item.qty).toFixed(3)}%0A`;
+      });
+      document.getElementById('send-whatsapp').href = 'https://wa.me/96555410070?text=' + message;
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      location.reload();
+    }
+  </script>
+</body>
+</html>
