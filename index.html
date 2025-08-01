@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,11 +6,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TryNavy - متجر الملابس الرجالية</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .cart-icon {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #001f3f;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .cart-icon span {
+      background: red;
+      border-radius: 50%;
+      padding: 2px 7px;
+      margin-left: 5px;
+      font-size: 0.8rem;
+    }
+  </style>
 </head>
 <body>
   <header>
     <h1>TryNavy</h1>
     <p class="tagline">ملابس رجالية أنيقة ومريحة</p>
+    <a href="cart.html" class="cart-icon">🛒 السلة <span id="cart-count">0</span></a>
   </header>
 
   <section class="products">
@@ -17,21 +38,21 @@
       <img src="https://via.placeholder.com/300x400?text=T-Shirt+Navy" alt="تيشيرت">
       <h2>تيشيرت كحلي</h2>
       <p class="price">KD 7.000</p>
-      <a href="https://wa.me/96555410070?text=أرغب+بطلب+تيشيرت+كحلي" target="_blank" class="btn">اطلب عبر واتساب</a>
+      <button class="btn" onclick="addToCart('تيشيرت كحلي', 7)">أضف إلى السلة</button>
     </div>
 
     <div class="product">
       <img src="https://via.placeholder.com/300x400?text=Shorts+Gray" alt="شورت">
       <h2>شورت رياضي رمادي</h2>
       <p class="price">KD 6.000</p>
-      <a href="https://wa.me/96555410070?text=أرغب+بطلب+شورت+رياضي" target="_blank" class="btn">اطلب عبر واتساب</a>
+      <button class="btn" onclick="addToCart('شورت رياضي رمادي', 6)">أضف إلى السلة</button>
     </div>
 
     <div class="product">
       <img src="https://via.placeholder.com/300x400?text=Training+Pants" alt="بنطلون">
       <h2>بنطلون تريننق</h2>
       <p class="price">KD 8.500</p>
-      <a href="https://wa.me/96555410070?text=أرغب+بطلب+بنطلون+تريننق" target="_blank" class="btn">اطلب عبر واتساب</a>
+      <button class="btn" onclick="addToCart('بنطلون تريننق', 8.5)">أضف إلى السلة</button>
     </div>
   </section>
 
@@ -46,5 +67,27 @@
   <footer>
     &copy; 2025 TryNavy. All rights reserved.
   </footer>
+
+  <script>
+    function addToCart(name, price) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let found = cart.find(item => item.name === name);
+      if (found) {
+        found.qty += 1;
+      } else {
+        cart.push({ name, price, qty: 1 });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+    }
+
+    function updateCartCount() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let total = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cart-count').textContent = total;
+    }
+
+    updateCartCount();
+  </script>
 </body>
 </html>
