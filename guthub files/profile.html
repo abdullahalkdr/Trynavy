@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .profile-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    .profile-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+    }
+
+    .user-info {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: left;
+      font-size: 16px;
+    }
+
+    .home-btn,
+    .edit-btn,
+    .save-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: navy;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .edit-form {
+      margin-top: 20px;
+      display: none;
+      text-align: left;
+    }
+
+    .edit-form input {
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <h2>Your Profile</h2>
+    <img src="" id="profileImg" class="profile-img" style="display:none;" />
+    <div class="user-info" id="userInfo">Loading...</div>
+
+    <button class="edit-btn" onclick="toggleEditForm()">✏️ تعديل البيانات</button>
+
+    <form class="edit-form" id="editForm">
+      <input type="text" id="editFirstName" placeholder="First Name" required />
+      <input type="text" id="editLastName" placeholder="Last Name" required />
+      <input type="tel" id="editPhone" placeholder="Phone Number" required />
+      <input type="text" id="editArea" placeholder="Area" required />
+      <input type="text" id="editBlock" placeholder="Block" required />
+      <input type="text" id="editStreet" placeholder="Street" required />
+      <input type="text" id="editHouse" placeholder="House/Flat" required />
+      <button type="submit" class="save-btn">💾 حفظ التعديلات</button>
+    </form>
+
+    <a href="index.html" class="home-btn">🏠 الصفحة الرئيسية</a>
+  </div>
+
+  <script>
+    let user = JSON.parse(localStorage.getItem('user'));
+
+    if (user && user.isLoggedIn) {
+      const img = document.getElementById("profileImg");
+      if (user.imageUrl) {
+        img.src = user.imageUrl;
+        img.style.display = "block";
+      }
+
+      function updateUserInfoDisplay() {
+        document.getElementById("userInfo").innerHTML = `
+          <p><strong>Full Name:</strong> ${user.firstName} ${user.lastName}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+          <p><strong>Phone:</strong> ${user.phone}</p>
+          <p><strong>Area:</strong> ${user.area}</p>
+          <p><strong>Block:</strong> ${user.block}</p>
+          <p><strong>Street:</strong> ${user.street}</p>
+          <p><strong>House/Flat:</strong> ${user.house}</p>
+        `;
+      }
+
+      updateUserInfoDisplay();
+
+      // Populate edit form
+      document.getElementById("editFirstName").value = user.firstName || "";
+      document.getElementById("editLastName").value = user.lastName || "";
+      document.getElementById("editPhone").value = user.phone || "";
+      document.getElementById("editArea").value = user.area || "";
+      document.getElementById("editBlock").value = user.block || "";
+      document.getElementById("editStreet").value = user.street || "";
+      document.getElementById("editHouse").value = user.house || "";
+
+    } else {
+      window.location.href = 'login.html';
+    }
+
+    function toggleEditForm() {
+      const form = document.getElementById("editForm");
+      form.style.display = form.style.display === "block" ? "none" : "block";
+    }
+
+    document.getElementById("editForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      user.firstName = document.getElementById("editFirstName").value;
+      user.lastName = document.getElementById("editLastName").value;
+      user.phone = document.getElementById("editPhone").value;
+      user.area = document.getElementById("editArea").value;
+      user.block = document.getElementById("editBlock").value;
+      user.street = document.getElementById("editStreet").value;
+      user.house = document.getElementById("editHouse").value;
+
+      localStorage.setItem('user', JSON.stringify(user));
+      toggleEditForm();
+      updateUserInfoDisplay();
+      alert("✅ تم حفظ التعديلات بنجاح");
+    });
+  </script>
+</body>
+</html>

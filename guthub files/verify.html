@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verify Email</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDvsXrbhK-TFWxr5PgYPGgk2vGJHlob-k",
+      authDomain: "trynavy-965.firebaseapp.com",
+      projectId: "trynavy-965",
+      storageBucket: "trynavy-965.firebasestorage.app",
+      messagingSenderId: "261057124370",
+      appId: "1:261057124370:web:9d07bcebaa48f7692c20cb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        if (user.emailVerified) {
+          const pendingUser = JSON.parse(localStorage.getItem("pendingUser"));
+          if (pendingUser) {
+            pendingUser.isLoggedIn = true;
+            localStorage.setItem("user", JSON.stringify(pendingUser));
+            localStorage.removeItem("pendingUser");
+            window.location.href = "profile.html";
+          } else {
+            // ما في بيانات محفوظة، نخليه يسجل دخول يدوياً
+            document.getElementById("status").innerHTML = `
+              ✅ تم التحقق من الإيميل.<br>
+              لكن لم يتم العثور على بيانات التسجيل المؤقتة.<br>
+              يرجى تسجيل الدخول يدويًا.
+              <br><br>
+              <a href="login.html">
+                <button>🔑 تسجيل الدخول</button>
+              </a>
+            `;
+          }
+        } else {
+          document.getElementById("status").innerHTML = `
+            ❌ لم يتم التحقق من الإيميل بعد.<br>
+            الرجاء التحقق من بريدك واضغط "تحديث" بعد التفعيل.
+            <br><br>
+            <button onclick="window.location.reload()">🔁 تحديث</button>
+          `;
+        }
+      } else {
+        document.getElementById("status").innerHTML = `
+          ❌ لا يوجد مستخدم مسجل دخول حالياً.<br><br>
+          <a href="login.html">
+            <button>🔑 تسجيل الدخول</button>
+          </a>
+        `;
+      }
+    });
+  </script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: navy;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>🕵️‍♂️ التحقق من الإيميل</h2>
+    <p id="status">جارٍ التحقق...</p>
+  </div>
+</body>
+</html>

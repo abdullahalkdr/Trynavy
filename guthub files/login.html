@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NAVY | Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #001F3F;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .logo {
+      margin: 0 auto;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .header-links {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .header-links a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+
+    .login-container {
+      background-color: #f9f9f9;
+      padding: 40px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      margin: 50px auto;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.04);
+      text-align: left;
+    }
+
+    .login-container h2 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #001F3F;
+    }
+
+    .login-container input[type="email"],
+    .login-container input[type="password"] {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 30px;
+      font-size: 16px;
+      background-color: #fff;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 30px;
+      background-color: #001F3F;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .login-container .extras {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #8a724f;
+      text-align: center;
+    }
+
+    .login-container .extras button {
+      background: none;
+      color: #8a724f;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    footer {
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+      margin-top: 40px;
+      padding: 20px 0;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <!-- تقدر تستخدم صورة هنا بدل النص -->
+      <img src="navvy.png" alt="NAVY Logo" style="height: 40px;"> -->
+      NAVY
+    </div>
+    <div class="header-links">
+      <a id="loginLink" href="Login.html">Login</a> /
+      <a id="signupLink" href="Signup.html">Signup</a>
+    </div>
+  </header>
+
+  <div class="login-container">
+    <h2>Log in</h2>
+    <input type="email" placeholder="Login or ID" id="email" />
+    <input type="password" placeholder="Password" id="password" />
+    <button onclick="login()">Log me in</button>
+
+    <div class="extras">
+      <div>Can't remember your password?<br>Is your account inactive?</div>
+      <button onclick="window.location.href='forgot-password.html'">Reset password</button>
+    </div>
+  </div>
+
+  <footer>
+    2025 © NAVY. All rights reserved.
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDvsXrbhK-TFWxr5PgYPGgk2vGJHlob-k",
+      authDomain: "trynavy-965.firebaseapp.com",
+      projectId: "trynavy-965",
+      storageBucket: "trynavy-965.appspot.com",
+      messagingSenderId: "261057124370",
+      appId: "1:261057124370:web:9d07bcebaa48f7692c20cb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById("loginLink").style.display = "none";
+        document.getElementById("signupLink").style.display = "none";
+      }
+    });
+
+    window.login = function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          if (user.emailVerified) {
+            alert("Login successful!");
+            window.location.href = "index.html";
+          } else {
+            alert("Please verify your email before logging in.");
+          }
+        })
+        .catch((error) => {
+          alert("Login failed: " + error.message);
+        });
+    };
+  </script>
+
+</body>
+</html>
