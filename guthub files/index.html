@@ -383,8 +383,8 @@ width: 0; /* JavaScript راح يغيرها إلى 80% */
 
   updateCartCount();
 function toggleSubmenu(id) {
-  const submenu = document.getElementById(submenu-${id});
-  const arrow = document.getElementById(arrow-${id});
+const submenu = document.getElementById(`submenu-${id}`);
+const arrow = document.getElementById(`arrow-${id}`);
 
   if (submenu.style.display === "block") {
     submenu.style.display = "none";
@@ -403,19 +403,7 @@ function closeProfileMenu() {
   document.getElementById("profileMenu").style.right = "-100%";
   document.getElementById("profileOverlay").style.display = "none";
 }
-  // الكود الجديد
-  function toggleSubmenu(id) {
-    const submenu = document.getElementById(submenu-${id});
-    const arrow = document.getElementById(arrow-${id});
 
-    if (submenu.style.display === "block") {
-      submenu.style.display = "none";
-      arrow.classList.remove("rotate");
-    } else {
-      submenu.style.display = "block";
-      arrow.classList.add("rotate");
-    }
-  }
 </script>
 <footer style="background-color: #f8f6f3; font-family: 'Barlow', sans-serif; color: #333; font-size: 14px;">
   <div style="max-width: 1200px; margin: auto; padding: 60px 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 40px;">
