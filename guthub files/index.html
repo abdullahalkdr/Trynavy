@@ -45,7 +45,7 @@
     }
 
     .navbar img.logo {
-      height: 60px;
+      height: 40px;
     }
 
     .nav-left, .nav-right {
@@ -178,7 +178,121 @@ width: 0; /* JavaScript راح يغيرها إلى 80% */
       color: #777;
       margin: 40px 0 20px;
     }
-  </style>
+
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  .modal-overlay {
+  position: fixed; /* مهم */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+  .modal-container {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 30px 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    text-align: center;
+    position: relative;
+    font-family: 'Barlow', sans-serif;
+  }
+
+  .modal-container h2 {
+    font-size: 24px;
+    margin-top: 0;
+    color: #001F3F;
+  }
+
+  .modal-container input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+    background: transparent;
+    outline: none;
+  }
+
+  .modal-container label {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .modal-container label input[type="checkbox"] {
+    margin-right: 10px;
+  }
+
+  .modal-container button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 30px;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+  }
+
+  .btn-primary {
+    background-color: #001F3F;
+    color: white;
+  }
+
+  .btn-outline {
+    border: 2px solid #001F3F;
+    color: #001F3F;
+    background: white;
+  }
+
+  .modal-container a {
+    display: block;
+    margin-top: 15px;
+    font-size: 13px;
+    color: #001F3F;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .or-divider {
+    font-size: 14px;
+    color: #aaa;
+    margin: 20px 0 10px;
+  }
+
+  .bottom-link {
+    font-size: 13px;
+    color: #333;
+    margin-top: 15px;
+  }
+
+  .bottom-link a {
+    font-weight: bold;
+    color: #001F3F;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #999;
+  }
+ </style>
 </head>
 <body>
 
@@ -192,7 +306,7 @@ width: 0; /* JavaScript راح يغيرها إلى 80% */
   <img src="navvy.png" alt="NAVY Logo" class="logo" />
 
   <div class="nav-right">
-<button onclick="openProfileMenu()" style="background: none; border: none; cursor: pointer;">
+<button onclick="openLoginModal()" style="...">
   <i class="fas fa-user nav-icon"></i>
 </button>
     <a href="cart.html" style="position: relative;">
@@ -202,7 +316,7 @@ width: 0; /* JavaScript راح يغيرها إلى 80% */
   </div>
 </div>
 
-<!-- Profile Sidebar -->ok
+<!-- Profile Sidebar -->
 <div id="profileMenu" style="
   position: fixed;
   top: 0;
@@ -383,8 +497,8 @@ width: 0; /* JavaScript راح يغيرها إلى 80% */
 
   updateCartCount();
 function toggleSubmenu(id) {
-const submenu = document.getElementById(`submenu-${id}`);
-const arrow = document.getElementById(`arrow-${id}`);
+  const submenu = document.getElementById(`submenu-${id}`);
+  const arrow = document.getElementById(`arrow-${id}`);
 
   if (submenu.style.display === "block") {
     submenu.style.display = "none";
@@ -403,7 +517,19 @@ function closeProfileMenu() {
   document.getElementById("profileMenu").style.right = "-100%";
   document.getElementById("profileOverlay").style.display = "none";
 }
+    // الكود الجديد
+  function toggleSubmenu(id) {
+    const submenu = document.getElementById(`submenu-${id}`);
+    const arrow = document.getElementById(`arrow-${id}`);
 
+    if (submenu.style.display === "block") {
+      submenu.style.display = "none";
+      arrow.classList.remove("rotate");
+    } else {
+      submenu.style.display = "block";
+      arrow.classList.add("rotate");
+    }
+  }
 </script>
 <footer style="background-color: #f8f6f3; font-family: 'Barlow', sans-serif; color: #333; font-size: 14px;">
   <div style="max-width: 1200px; margin: auto; padding: 60px 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 40px;">
@@ -459,5 +585,77 @@ function closeProfileMenu() {
     2025 © NAVY. All rights reserved. &nbsp; | &nbsp; <a href="#" style="color: #333;">trynavy.com</a>
   </div>
 </footer>
+<!-- Trigger Button -->
+<button onclick="openLoginModal()">Login</button>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="loginModal" onclick="closeLoginModal(event)">
+  <div class="modal-container" onclick="event.stopPropagation()">
+    <div class="close-btn" onclick="closeLoginModal()">×</div>
+    <h2>Sign In</h2>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+
+    <label><input type="checkbox" /> Keep Me Signed In</label>
+
+    <button class="btn-primary" onclick="login()">Sign In</button>
+    <button class="btn-outline" onclick="window.location.href='signup.html'">Create Account</button>
+
+    <a onclick="window.location.href='forgot-password.html'">Forgot Password?</a>
+
+    <div class="or-divider">Or</div>
+
+    <div class="bottom-link">
+      Signed Up for NAVY Rewards in Store?<br />
+      <a onclick="window.location.href='create-password.html'">Create a Password</a>
+    </div>
+  </div>
+</div>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBDvsXrbhK-TFWxr5PgYPGgk2vGJHlob-k",
+    authDomain: "trynavy-965.firebaseapp.com",
+    projectId: "trynavy-965",
+    storageBucket: "trynavy-965.appspot.com",
+    messagingSenderId: "261057124370",
+    appId: "1:261057124370:web:9d07bcebaa48f7692c20cb"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.login = function () {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        if (user.emailVerified) {
+          alert("Login successful!");
+          closeLoginModal();
+          window.location.href = "index.html";
+        } else {
+          alert("Please verify your email before logging in.");
+        }
+      })
+      .catch((error) => {
+        alert("Login failed: " + error.message);
+      });
+  };
+
+  window.openLoginModal = function () {
+  document.getElementById("loginModal").style.display = "flex";
+  document.body.classList.add("modal-open"); // 🔥 يمنع التمرير ويخلي المودال ثابت
+};
+
+window.closeLoginModal = function () {
+  document.getElementById("loginModal").style.display = "none";
+  document.body.classList.remove("modal-open");
+};
+ </script>
 </body>
 </html>
