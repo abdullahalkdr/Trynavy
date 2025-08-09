@@ -116,12 +116,12 @@
   <header>
     <div class="logo">
       <!-- تقدر تستخدم صورة هنا بدل النص -->
-      <img src="navvy.png" alt="NAVY Logo" style="height: 40px;"> -->
+      <img src="navvy.png" alt="NAVY Logo" style="height: 40px;">
       NAVY
     </div>
     <div class="header-links">
-      <a id="loginLink" href="Login.html">Login</a> /
-      <a id="signupLink" href="Signup.html">Signup</a>
+      <a id="loginLink" href="login.html">Login</a> /
+      <a id="signupLink" href="signup.html">Signup</a>
     </div>
   </header>
 
@@ -140,49 +140,82 @@
   <footer>
     2025 © NAVY. All rights reserved.
   </footer>
+<script src="auth.js"></script>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBDvsXrbhK-TFWxr5PgYPGgk2vGJHlob-k",
-      authDomain: "trynavy-965.firebaseapp.com",
-      projectId: "trynavy-965",
-      storageBucket: "trynavy-965.appspot.com",
-      messagingSenderId: "261057124370",
-      appId: "1:261057124370:web:9d07bcebaa48f7692c20cb"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyBDvsXrbhK-TFWxr5PgYPGgk2vGJHlob-k",
+    authDomain: "trynavy-965.firebaseapp.com",
+    projectId: "trynavy-965",
+    storageBucket: "trynavy-965.appspot.com",
+    messagingSenderId: "261057124370",
+    appId: "1:261057124370:web:9d07bcebaa48f7692c20cb"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        document.getElementById("loginLink").style.display = "none";
-        document.getElementById("signupLink").style.display = "none";
-      }
-    });
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const loginLink  = document.getElementById("loginLink");
+      const signupLink = document.getElementById("signupLink");
+      if (loginLink)  loginLink.style.display  = "none";
+      if (signupLink) signupLink.style.display = "none";
+    }
+  });
 
-    window.login = function () {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+  window.login = function () {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          if (user.emailVerified) {
-            alert("Login successful!");
-            window.location.href = "index.html";
-          } else {
-            alert("Please verify your email before logging in.");
-          }
-        })
-        .catch((error) => {
-          alert("Login failed: " + error.message);
-        });
-    };
-  </script>
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
 
-</body>
+        // تحقّق من تفعيل الإيميل
+        if (!user.emailVerified) {
+          alert("Please verify your email before logging in.");
+          return;
+        }
+
+        // اقرأ أي بيانات محفوظة سابقاً
+        var cached = null;
+        try {
+          var raw = localStorage.getItem('navyUser');
+          cached = raw ? JSON.parse(raw) : null;
+        } catch (e) { cached = null; }
+
+        // استنتاج الاسم من displayName إذا موجود
+        var display = (user.displayName || '').trim();
+        var firstFromDisplay = display ? display.split(' ')[0] : '';
+        var lastFromDisplay  = display ? display.split(' ').slice(1).join(' ') : '';
+
+        // خذ من المخزون القديم أو من displayName أو خليها فاضية
+        var firstName = (cached && cached.firstName) ? cached.firstName
+                    : (localStorage.getItem('firstName') || firstFromDisplay || '');
+        var lastName  = (cached && cached.lastName) ? cached.lastName
+                    : (localStorage.getItem('lastName') || lastFromDisplay  || '');
+
+        // خزّن في localStorage عبر auth.js
+        if (window.NAVY_AUTH && typeof window.NAVY_AUTH.setLoggedInUser === 'function') {
+          window.NAVY_AUTH.setLoggedInUser({
+            email: user.email,
+            firstName: firstName.trim(),
+            lastName:  lastName.trim(),
+            displayName: (firstName + ' ' + lastName).trim()
+          });
+        }
+
+        // نقل للصفحة الرئيسية
+        window.location.href = "index.html";
+      })
+      .catch((error) => {
+        alert("Login failed: " + error.message);
+      });
+  };
+</script>
+  </body>
 </html>

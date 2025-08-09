@@ -8,51 +8,38 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --navy:#0a2a47;
-      --ink:#0f172a;
-      --text:#1f2937;
-      --muted:#6b7280;
-      --bg:#f6f7f9;
-      --card:#ffffff;
-      --border:#e5e7eb;
-      --accent:#0a2a47;
-      --accent-ghost:#e9eef5;
+      --navy:#0a2a47; --ink:#0f172a; --text:#1f2937; --muted:#6b7280; --bg:#f6f7f9;
+      --card:#ffffff; --border:#e5e7eb; --accent:#0a2a47; --accent-ghost:#e9eef5;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;font-family:'Barlow',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
-
     .navbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:#fff;border-bottom:1px solid var(--border)}
     .nav-left,.nav-right{display:flex;align-items:center;gap:14px}
     .brand{font-weight:700;letter-spacing:2px;font-size:22px;color:var(--navy);text-align:center}
     .brand a{color:inherit;text-decoration:none}
     .icon-btn{background:transparent;border:0;cursor:pointer;font-size:20px;color:var(--ink);padding:6px;border-radius:999px}
     .icon-btn:active{transform:scale(.98)}
-
     .page{max-width:1100px;margin:26px auto;padding:0 16px}
     .crumbs{font-size:14px;color:var(--muted);margin-bottom:10px}
     .page h1{margin:0 0 16px;color:var(--ink);font-size:28px}
     .subtitle{color:var(--muted);margin-bottom:24px}
-
     .layout{display:grid;grid-template-columns:260px 1fr;gap:22px}
     .aside{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px}
     .aside h3{margin:10px 10px 6px;font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase}
     .aside a{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:600}
     .aside a .fa{width:18px;text-align:center}
     .aside a.active, .aside a:hover{background:var(--accent-ghost);color:var(--navy)}
-
     .card{background:var(--card);border:1px solid var(--border);border-radius:14px}
     .card + .card{margin-top:16px}
     .card .card-hd{padding:18px 18px 0}
     .card .card-bd{padding:18px}
-
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
     .col-6{grid-column:span 6}
     .col-12{grid-column:span 12}
     label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
     input,select,textarea{width:100%;padding:12px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:15px}
     input:focus,select:focus,textarea:focus{outline:2px solid #c9d7e6;border-color:#c9d7e6}
-
     .row{display:flex;gap:10px}
     .savebar{position:sticky;bottom:0;display:flex;justify-content:flex-end;gap:10px;padding:12px;background:rgba(255,255,255,.8);backdrop-filter:blur(8px);border-top:1px solid var(--border);border-radius:0 0 14px 14px}
     .btn{appearance:none;border:0;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer}
@@ -60,11 +47,7 @@
     .btn-ghost{background:#fff;border:1px solid var(--border);color:var(--ink)}
     .note{font-size:13px;color:var(--muted)}
     .helper{font-size:12px;color:var(--muted);margin-top:6px}
-
-    @media (max-width:980px){
-      .layout{grid-template-columns:1fr}
-      .aside{order:2}
-    }
+    @media (max-width:980px){ .layout{grid-template-columns:1fr} .aside{order:2} }
   </style>
 </head>
 <body>
@@ -74,13 +57,9 @@
       <button class="icon-btn" id="menuBtn" aria-label="Menu"><i class="fa fa-bars"></i></button>
     </div>
     <div class="brand">
-      <a href="/">
-    <img src="navvy.png" alt="NAVY Logo" style="height:28px;">
-      </a>
+      <a href="index.html"><img src="navvy.png" alt="NAVY Logo" style="height:28px;"></a>
     </div>
-
     <div class="nav-right">
-      <!-- اضغط يفتح سايدبار الحساب -->
       <a class="icon-btn" href="javascript:void(0)" onclick="openProfileMenu()" aria-label="Account">
         <i class="fa-regular fa-user"></i>
       </a>
@@ -268,8 +247,8 @@
   <!-- Profile Sidebar (Your Account) -->
   <div id="profileMenu" style="position:fixed;top:0;right:-100%;width:70%;height:100vh;background:#fff;box-shadow:-2px 0 5px rgba(0,0,0,.2);transition:right .3s;z-index:1001;padding:25px 20px;border-top-left-radius:25px;border-bottom-left-radius:25px;font-size:12px;">
     <button onclick="closeProfileMenu()" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
-    <h2 style="font-weight:700;color:#001f3f;font-size:20px;margin-bottom:5px;">Your Account</h2>
-    <p style="color:#555;margin-bottom:20px;">Sign in for rewards, easy order tracking and more.</p>
+    <h2 data-account-title style="font-weight:700;color:#001f3f;font-size:20px;margin-bottom:5px;">Your Account</h2>
+    <p style="color:#555;margin-bottom:20px;"><strong data-user-name></strong></p>
     <div style="display:flex;gap:8px;margin-bottom:24px;">
       <a href="login.html" style="flex:1;text-align:center;background:#001f3f;color:#fff;padding:10px 0;border-radius:30px;text-decoration:none;font-weight:600;font-size:13px;">Sign In</a>
       <a href="signup.html" style="flex:1;text-align:center;color:#001f3f;padding:10px 0;border-radius:30px;border:2px solid #001f3f;text-decoration:none;font-weight:600;font-size:13px;">Join</a>
@@ -285,144 +264,204 @@
   </div>
   <div id="profileOverlay" onclick="closeProfileMenu()" style="position:fixed;top:0;right:0;width:100vw;height:100vh;z-index:998;background:rgba(0,0,0,.3);display:none;"></div>
 
+  <!-- حمّل auth.js أولاً -->
+  <script src="auth.js"></script>
+
   <script>
     // helpers
     function getUser(){
       try{
-        const raw=localStorage.getItem('navyUser');
-        if(!raw){return {profile:{},address:{},prefs:{}}}
+        var raw = localStorage.getItem('navyUser');
+        if(!raw){ return {profile:{},address:{},prefs:{}}; }
         return JSON.parse(raw);
-      }catch(e){return {profile:{},address:{},prefs:{}}}
+      }catch(e){ return {profile:{},address:{},prefs:{}}; }
     }
-    function setUser(u){localStorage.setItem('navyUser',JSON.stringify(u))}
-    const user = getUser();
+    function setUser(u){ localStorage.setItem('navyUser', JSON.stringify(u)); }
 
-    const $ = (s)=>document.querySelector(s);
+    var user = getUser();
+    var $ = function(s){ return document.querySelector(s); };
+
     function fill(){
-      $('#firstName').value = user.profile?.firstName || '';
-      $('#lastName').value  = user.profile?.lastName || '';
-      $('#phoneCode').value = user.profile?.phoneCode || '+965';
-      $('#phone').value     = user.profile?.phone || '';
-      $('#email').value     = user.profile?.email || '';
-      $('#zone').value   = user.address?.zone || '';
-      $('#block').value  = user.address?.block || '';
-      $('#street').value = user.address?.street || '';
-      $('#house').value  = user.address?.house || '';
-      $('#notes').value  = user.address?.notes || '';
-      $('#cashpref').value = user.payment?.preferred || 'knet';
-      $('#promo').checked  = (user.prefs?.promo ?? true);
+      // اقرأ المستخدم المحفوظ على مستوى الدخول (الهيدر)
+      var authUser = (window.NAVY_AUTH && window.NAVY_AUTH.getLoggedInUser)
+        ? window.NAVY_AUTH.getLoggedInUser()
+        : null;
+
+      // فضّل الاسم الموجود في auth.js لو موجود
+      var first = (authUser && authUser.firstName) ? authUser.firstName
+               : (user.profile && user.profile.firstName) ? user.profile.firstName : '';
+      var last  = (authUser && authUser.lastName) ? authUser.lastName
+               : (user.profile && user.profile.lastName) ? user.profile.lastName : '';
+
+      $('#firstName').value = first;
+      $('#lastName').value  = last;
+      $('#phoneCode').value = (user.profile && user.profile.phoneCode) || '+965';
+      $('#phone').value     = (user.profile && user.profile.phone) || '';
+      $('#email').value     = (user.profile && user.profile.email) || '';
+      $('#zone').value      = (user.address && user.address.zone) || '';
+      $('#block').value     = (user.address && user.address.block) || '';
+      $('#street').value    = (user.address && user.address.street) || '';
+      $('#house').value     = (user.address && user.address.house) || '';
+      $('#notes').value     = (user.address && user.address.notes) || '';
+      $('#cashpref').value  = (user.payment && user.payment.preferred) || 'knet';
+      $('#promo').checked   = (user.prefs && ('promo' in user.prefs)) ? !!user.prefs.promo : true;
     }
     fill();
 
     function toast(msg){
-      const t=document.createElement('div');
+      var t=document.createElement('div');
       t.textContent=msg;
       t.style.cssText='position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#0a2a47;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:9999;font-weight:700';
-      document.body.appendChild(t);setTimeout(()=>t.remove(),1800);
+      document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 1800);
     }
 
-    document.getElementById('formProfile').addEventListener('submit',e=>{
+    // حفظ البروفايل + مزامنة مع auth.js
+    document.getElementById('formProfile').addEventListener('submit', function(e){
       e.preventDefault();
-      user.profile={
-        firstName:$('#firstName').value.trim(),
-        lastName:$('#lastName').value.trim(),
-        phoneCode:$('#phoneCode').value,
-        phone:$('#phone').value.trim(),
-        email:user.profile?.email||$('#email').value.trim()
+
+      // 1) حدّث هيكل الصفحة الحالي
+      user.profile = {
+        firstName: $('#firstName').value.trim(),
+        lastName:  $('#lastName').value.trim(),
+        phoneCode: $('#phoneCode').value,
+        phone:     $('#phone').value.trim(),
+        email:     (user.profile && user.profile.email) || $('#email').value.trim()
       };
-      setUser(user);toast('Profile saved');
+      setUser(user);
+
+      // 2) حدّث مخزن auth.js (الجذر) عشان الهيدر وكل الصفحات تقرا الاسم
+      try {
+        var authUser = (window.NAVY_AUTH && window.NAVY_AUTH.getLoggedInUser)
+          ? (window.NAVY_AUTH.getLoggedInUser() || {})
+          : {};
+
+        authUser.email       = authUser.email || user.profile.email || '';
+        authUser.firstName   = user.profile.firstName;
+        authUser.lastName    = user.profile.lastName;
+        authUser.displayName = (authUser.firstName + ' ' + authUser.lastName).trim();
+
+        if (window.NAVY_AUTH && window.NAVY_AUTH.setLoggedInUser) {
+          window.NAVY_AUTH.setLoggedInUser(authUser);
+          window.NAVY_AUTH.renderAuthUI(); // حدّث الهيدر والسايدبار فورًا
+        }
+      } catch (err) {}
+
+      toast('Profile saved');
     });
 
-    document.getElementById('formSecurity').addEventListener('submit',e=>{
+    document.getElementById('formSecurity').addEventListener('submit', function(e){
       e.preventDefault();
-      user.profile=user.profile||{};
-      user.profile.email=$('#email').value.trim();
-      setUser(user);toast('Security updated');
+      user.profile = user.profile || {};
+      user.profile.email = $('#email').value.trim();
+      setUser(user);
+      toast('Security updated');
       e.target.reset();
     });
 
-    document.getElementById('formAddress').addEventListener('submit',e=>{
+    document.getElementById('formAddress').addEventListener('submit', function(e){
       e.preventDefault();
-      user.address={
-        zone:$('#zone').value.trim(),
-        block:$('#block').value.trim(),
-        street:$('#street').value.trim(),
-        house:$('#house').value.trim(),
-        notes:$('#notes').value.trim()
+      user.address = {
+        zone:   $('#zone').value.trim(),
+        block:  $('#block').value.trim(),
+        street: $('#street').value.trim(),
+        house:  $('#house').value.trim(),
+        notes:  $('#notes').value.trim()
       };
-      setUser(user);toast('Address saved');
+      setUser(user);
+      toast('Address saved');
     });
 
-    document.getElementById('formPayment').addEventListener('submit',e=>{
+    document.getElementById('formPayment').addEventListener('submit', function(e){
       e.preventDefault();
-      user.payment={preferred:$('#cashpref').value};
-      setUser(user);toast('Payment preference saved');
+      user.payment = { preferred: $('#cashpref').value };
+      setUser(user);
+      toast('Payment preference saved');
     });
 
-    document.getElementById('formEmails').addEventListener('submit',e=>{
+    document.getElementById('formEmails').addEventListener('submit', function(e){
       e.preventDefault();
-      user.prefs={promo:$('#promo').checked};
-      setUser(user);toast('Email preferences saved');
+      user.prefs = { promo: $('#promo').checked };
+      setUser(user);
+      toast('Email preferences saved');
     });
 
-    document.querySelectorAll('[data-reset]').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const formId=btn.getAttribute('data-reset');
+    document.querySelectorAll('[data-reset]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var formId = btn.getAttribute('data-reset');
         document.getElementById(formId).reset();
-      })
+      });
     });
 
-    const sections=[...document.querySelectorAll('#content h2')];
-    const links=[...document.querySelectorAll('.aside a')];
-    const obs=new IntersectionObserver(entries=>{
-      entries.forEach(ent=>{
+    var sections=[].slice.call(document.querySelectorAll('#content h2'));
+    var links=[].slice.call(document.querySelectorAll('.aside a'));
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(ent){
         if(ent.isIntersecting){
-          links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+ent.target.id));
+          links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + ent.target.id); });
         }
-      })
+      });
     },{rootMargin:'-40% 0px -55% 0px',threshold:0});
-    sections.forEach(s=>obs.observe(s));
+    sections.forEach(function(s){ obs.observe(s); });
 
-    document.getElementById('exportBtn').addEventListener('click',e=>{e.preventDefault();toast('We will email you a copy of your data.');});
-    document.getElementById('deleteBtn').addEventListener('click',e=>{e.preventDefault();if(confirm('Delete your account? This cannot be undone.')){localStorage.removeItem('navyUser');toast('Account deleted (local)');setTimeout(()=>location.href='/',1200)}});
+    document.getElementById('exportBtn').addEventListener('click',function(e){e.preventDefault();toast('We will email you a copy of your data.');});
+    document.getElementById('deleteBtn').addEventListener('click',function(e){
+      e.preventDefault();
+      if(confirm('Delete your account? This cannot be undone.')){
+        localStorage.removeItem('navyUser');
+        toast('Account deleted (local)');
+        setTimeout(function(){ location.href='index.html'; }, 1200);
+      }
+    });
 
     document.getElementById('menuBtn').addEventListener('click', openSidebar);
 
-    // ---- Profile sidebar open/close (fix: no nested <script>) ----
-    function openProfileMenu() {
-      document.getElementById('profileMenu').style.right = '0';
-      document.getElementById('profileOverlay').style.display = 'block';
-    }
-    function closeProfileMenu() {
-      document.getElementById('profileMenu').style.right = '-100%';
-      document.getElementById('profileOverlay').style.display = 'none';
-    }
-    
-    function openSidebar(){
-      document.getElementById('sidebar').style.left = '0';
-      document.getElementById('sidebarOverlay').style.display = 'block';
-    }
-    function closeSidebar(){
-      document.getElementById('sidebar').style.left = '-100%';
-      document.getElementById('sidebarOverlay').style.display = 'none';
+    // Profile sidebar open/close
+function openProfileMenu() {
+  document.getElementById('profileMenu').style.right = '0';
+  document.getElementById('profileOverlay').style.display = 'block';
+}
+function closeProfileMenu() {
+  document.getElementById('profileMenu').style.right = '-100%';
+  document.getElementById('profileOverlay').style.display = 'none';
 }
 
-  </script>
+// Left app sidebar
+function openSidebar(){
+  document.getElementById('sidebar').style.left = '0';
+  document.getElementById('sidebarOverlay').style.display = 'block';
+}
+function closeSidebar(){
+  document.getElementById('sidebar').style.left = '-100%';
+  document.getElementById('sidebarOverlay').style.display = 'none';
+}
+
+// اغلاق السايدبار ثم الانتقال للرابط
+(function () {
+  var links = document.querySelectorAll('#sidebar a[href]');
+  links.forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var url = this.getAttribute('href');
+      if (!url || url.charAt(0) === '#') return; // تجاهل الروابط الداخلية
+      e.preventDefault();
+      try { closeSidebar(); } catch (err) {}
+      setTimeout(function () { window.location.href = url; }, 280); // نفس مدة transition
+    });
+  });
+})();
+</script>
+
   <!-- Left App Sidebar -->
-<div id="sidebar" style="position:fixed;top:0;left:-100%;width:75%;max-width:340px;height:100vh;background:#fff;box-shadow:2px 0 8px rgba(0,0,0,.2);transition:left .3s;z-index:1002;padding:24px 18px;border-top-right-radius:24px;border-bottom-right-radius:24px;">
-  <button onclick="closeSidebar()" style="position:absolute;top:18px;right:18px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
-  <h2 style="font-weight:700;color:#001f3f;font-size:20px;margin:0 0 16px;">Menu</h2>
-
-  <nav style="display:flex;flex-direction:column;gap:14px;font-size:14px;">
-    <a href="/" style="text-decoration:none;color:#0b1e34;">Home</a>
-    <a href="/shop.html" style="text-decoration:none;color:#0b1e34;">Shop</a>
-    <a href="/about.html" style="text-decoration:none;color:#0b1e34;">About</a>
-    <a href="/contact.html" style="text-decoration:none;color:#0b1e34;">Contact</a>
-  </nav>
-</div>
-
-<!-- Overlay للسايدبار -->
-<div id="sidebarOverlay" onclick="closeSidebar()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1001;background:rgba(0,0,0,.3);display:none;"></div>
+  <div id="sidebar" style="position:fixed;top:0;left:-100%;width:75%;max-width:340px;height:100vh;background:#fff;box-shadow:2px 0 8px rgba(0,0,0,.2);transition:left .3s;z-index:1002;padding:24px 18px;border-top-right-radius:24px;border-bottom-right-radius:24px;">
+    <button onclick="closeSidebar()" style="position:absolute;top:18px;right:18px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
+    <h2 style="font-weight:700;color:#001f3f;font-size:20px;margin:0 0 16px;">Menu</h2>
+    <nav style="display:flex;flex-direction:column;gap:14px;font-size:14px;">
+      <a href="index.html" style="text-decoration:none;color:#0b1e34;">Home</a>
+      <a href="search.html" style="text-decoration:none;color:#0b1e34;">Shop</a>
+      <a href="profile.html" style="text-decoration:none;color:#0b1e34;">Profile</a>
+      <a href="contact-us.html" style="text-decoration:none;color:#0b1e34;">Contact</a>
+    </nav>
+  </div>
+  <div id="sidebarOverlay" onclick="closeSidebar()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1001;background:rgba(0,0,0,.3);display:none;"></div>
 
 </body>
 </html>

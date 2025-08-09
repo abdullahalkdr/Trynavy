@@ -277,23 +277,32 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <div class="navbar">
-    <div class="nav-left">
-      <i class="fas fa-bars nav-icon" onclick="openSidebar()"></i>
-      <i class="fas fa-search nav-icon" onclick="window.location.href='search.html'"></i>
-    </div>
-    <img src="navvy.png" alt="NAVY Logo" class="logo" />
-    <div class="nav-right">
-      <button onclick="openProfileMenu()" style="background:none;border:none;cursor:pointer;">
-        <i class="fas fa-user nav-icon"></i>
-      </button>
-      <a href="cart.html" style="position: relative;">
-        <i class="fas fa-shopping-bag nav-icon"></i>
-        <span class="cart-count" id="cart-count">0</span>
-      </a>
-    </div>
+<!-- Header -->
+<div class="navbar">
+  <div class="nav-left">
+    <i class="fas fa-bars nav-icon" onclick="openSidebar()"></i>
+    <i class="fas fa-search nav-icon" onclick="window.location.href='search.html'"></i>
   </div>
+
+  <img src="navvy.png" alt="NAVY Logo" class="logo" />
+
+  <div class="nav-right">
+    <!-- يظهر إذا المستخدم مو داخل -->
+    <a href="login.html" class="nav-link" data-login-link>Login</a>
+
+    <!-- يظهر إذا المستخدم داخل -->
+    <button onclick="openProfileMenu()" data-user-button style="background:none;border:none;cursor:pointer;">
+      <i class="fas fa-user nav-icon"></i>
+      <span data-user-name style="font-size:14px;margin-inline-start:6px;"></span>
+    </button>
+
+    <a href="cart.html" style="position: relative;">
+      <i class="fas fa-shopping-bag nav-icon"></i>
+      <span class="cart-count" id="cart-count">0</span>
+    </a>
+  </div>
+</div> <!-- ← إغلاق navbar -->
+
 
   <!-- Navy Points badge (مكانه الجديد بعد الهيدر مباشرة) -->
   <div id="navy-points-badge" style="max-width:420px;margin:12px auto 20px;"></div>
@@ -301,9 +310,11 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
   <!-- Profile Sidebar -->
 <div id="profileMenu" style="position:fixed;top:0;right:-100%;width:70%;height:100vh;background:#fff;box-shadow:-2px 0 5px rgba(0,0,0,.2);transition:right .3s;z-index:1001;padding:25px 20px;border-top-left-radius:25px;border-bottom-left-radius:25px;font-size:12px;">
   <button onclick="closeProfileMenu()" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
-  <h2 style="font-weight:700;color:#001f3f;font-size:20px;margin-bottom:5px;">Your Account</h2>
-  <p style="color:#555;margin-bottom:20px;">Sign in for rewards, easy order tracking and more.</p>
-  <div style="display:flex;gap:8px;margin-bottom:24px;">
+  <h2 data-account-title style="font-weight:700;color:#001f3f;font-size:20px;margin-bottom:5px;">Your Account</h2>
+  <p style="color:#555;margin-bottom:20px;">
+    <strong data-user-name></strong>
+  </p>
+  <div id="authTabs" style="display:none;gap:8px;margin-bottom:24px;">
     <a href="login.html" style="flex:1;text-align:center;background:#001f3f;color:#fff;padding:10px 0;border-radius:30px;text-decoration:none;font-weight:600;font-size:13px;">Sign In</a>
     <a href="signup.html" style="flex:1;text-align:center;color:#001f3f;padding:10px 0;border-radius:30px;border:2px solid #001f3f;text-decoration:none;font-weight:600;font-size:13px;">Join</a>
   </div>
@@ -317,6 +328,10 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
     <a href="./account-settings.html" id="accountSettingsLink" style="display:block;text-decoration:none;">
       <div style="font-weight:700;color:#001f3f;">Account Settings</div>
       <div style="color:#666;">Update info, payment, addresses, email preferences</div>
+    </a>
+    <a id="signOutAction" href="javascript:void(0)" onclick="logout()" style="display:none;text-decoration:none;">
+      <div style="font-weight:700;color:#d00;">Sign Out</div>
+      <div style="color:#666;">Log out from your account</div>
     </a>
   </div>
 </div>
@@ -763,6 +778,107 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
       </div>
     `;
   })();
+</script>
+<script src="auth.js"></script>
+<script>
+  // === تخزين حالة الدخول يتم بعد نجاح اللوق-إن في login.html مثلا ===
+  // مثال: localStorage.setItem('navy_token', '1');
+  //       localStorage.setItem('navy_user', JSON.stringify({ fullName:'Abdullah Alkhudair', email:'you@x.com' }));
+
+  function isLoggedIn(){ return !!localStorage.getItem('navy_token'); }
+  function getUser(){
+    try { return JSON.parse(localStorage.getItem('navy_user')||'null'); }
+    catch { return null; }
+  }
+
+  function refreshAuthUI(){
+    const logged = isLoggedIn();
+    const user = getUser();
+
+    // navbar
+    const loginLink   = document.querySelector('[data-login-link]');
+    const userBtn     = document.querySelector('[data-user-button]');
+    const userNameNav = document.querySelector('.nav-right [data-user-name]');
+
+    if (loginLink) loginLink.style.display = logged ? 'none' : 'inline-block';
+    if (userBtn)   userBtn.style.display   = 'inline-flex'; // دايمًا ظاهر
+    if (userNameNav) userNameNav.textContent = logged && user?.fullName ? user.fullName.split(' ')[0] : '';
+
+    // داخل لوحة الحساب (البانِل)
+    const authTabs     = document.getElementById('authTabs');        // أزرار Sign In/Join
+    const nameInPanel  = document.querySelector('#profileMenu [data-user-name]');
+    const titleInPanel = document.querySelector('[data-account-title]');
+    const signOut = document.getElementById('signOutAction');
+    const accLink = document.getElementById('accountSettingsLink');
+
+    if (accLink) accLink.style.display = logged ? 'block' : 'none';
+    if (authTabs)    authTabs.style.display = logged ? 'none' : 'flex';
+    if (titleInPanel) titleInPanel.textContent = logged ? 'Your Account' : 'Welcome';
+    if (nameInPanel) nameInPanel.textContent  = logged ? (user?.fullName || '') : 'Guest';
+    if (signOut) signOut.style.display = logged ? 'block' : 'none';
+  }
+
+  // لما تفتح لوحة الحساب حدّثها
+  const _openProfileMenu = openProfileMenu;
+  window.openProfileMenu = function(){
+    _openProfileMenu(); // يستدعي القديمة
+    refreshAuthUI();
+  };
+
+  // عند تحميل الصفحة
+  document.addEventListener('DOMContentLoaded', refreshAuthUI);
+
+  // (اختياري) زر لوج آوت لو بتحطه مستقبلاً:
+  window.logout = function(){
+    localStorage.removeItem('navy_token');
+    localStorage.removeItem('navy_user');
+    refreshAuthUI();
+    closeProfileMenu();
+  };
+
+  // API معرّف مستخدم بسيط بديل
+function fakeAuth(email, password){
+    // تقدر تغيّر الشرط على مزاجك ، أو تعمل بيانك إذا حقيقي
+    return email && password.length >= 3;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+    const form  = document.getElementById('loginForm');
+    const email = document.getElementById('emailInput');
+    const pass  = document.getElementById('passwordInput');
+    const error = document.getElementById('loginError');
+
+    if(!form) return;
+
+    form.addEventListener('submit', function(e){
+        e.preventDefault();  // مهم: لا يخلي الصفحة تعيد تحميل نفسها
+        error.textContent = ''; // تصفير الأخطاء
+
+        const em = (email.value || '').trim();
+        const pw = pass.value || '';
+
+        if(!em || !pw){
+            error.textContent = 'الرجاء إدخال الإيميل وكلمة المرور';
+            return;
+        }
+
+        if(!fakeAuth(em, pw)){
+            error.textContent = 'بيانات الدخول غير صحيحة';
+            return;
+        }
+
+        // حفظ حالة الدخول
+        localStorage.setItem('navy_token', '1');
+        localStorage.setItem('navy_user', JSON.stringify({
+            fullName: 'Abdullah Alkhudair',
+            email: em
+        }));
+
+        // رجع المستخدم للرئيسية
+        window.location.href = 'index.html';
+    });
+}); // ← هنا سكرت الحدث بالكامل
+
 </script>
 
 </body>
