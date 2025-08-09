@@ -658,99 +658,109 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
   </footer>
 
   <script>
-    function openSidebar(){document.getElementById("sidebar").style.width="70%";document.getElementById("sidebarOverlay").style.display="block";}
-    function closeSidebar(){document.getElementById("sidebar").style.width="0";document.getElementById("sidebarOverlay").style.display="none";}
-    function updateCartCount(){let cart=JSON.parse(localStorage.getItem('cart'))||[];let total=cart.reduce((s,i)=>s+(i.qty||1),0);document.getElementById('cart-count').textContent=total;} updateCartCount();
-    function toggleSubmenu(id){const s=document.getElementById(`submenu-${id}`);const a=document.getElementById(`arrow-${id}`);if(s.style.display==="block"){s.style.display="none";a.classList.remove("rotate");}else{s.style.display="block";a.classList.add("rotate");}}
-    function openProfileMenu(){document.getElementById("profileMenu").style.right="0";document.getElementById("profileOverlay").style.display="block";}
-    function closeProfileMenu(){document.getElementById("profileMenu").style.right="-100%";document.getElementById("profileOverlay").style.display="none";}
+  // Sidebar + overlays
+  function openSidebar(){document.getElementById("sidebar").style.width="70%";document.getElementById("sidebarOverlay").style.display="block";}
+  function closeSidebar(){document.getElementById("sidebar").style.width="0";document.getElementById("sidebarOverlay").style.display="none";}
+  function openProfileMenu(){document.getElementById("profileMenu").style.right="0";document.getElementById("profileOverlay").style.display="block";}
+  function closeProfileMenu(){document.getElementById("profileMenu").style.right="-100%";document.getElementById("profileOverlay").style.display="none";}
 
-    // Facets accordion (left filters)
-    function toggleFacet(btn) {
-  const box = btn.parentElement.querySelector('.facet-content');
-  const icon = btn.querySelector('i');
-  const open = box.style.display === 'block';
+  // Cart count
+  function updateCartCount(){
+    let cart=JSON.parse(localStorage.getItem('cart'))||[];
+    let total=cart.reduce((s,i)=>s+(i.qty||1),0);
+    const el = document.getElementById('cart-count');
+    if(el) el.textContent=total;
+  }
+  updateCartCount();
 
-  box.style.display = open ? 'none' : 'block';
-  icon.className = open ? 'fa fa-plus' : 'fa fa-minus';
-}
+  // Sidebar submenus
+  function toggleSubmenu(id){
+    const s=document.getElementById(`submenu-${id}`);
+    const a=document.getElementById(`arrow-${id}`);
+    if(!s||!a) return;
+    const open = s.style.display==="block";
+    s.style.display = open?"none":"block";
+    a.classList.toggle("rotate", !open);
+  }
 
-  </script>
-  <script>
-(function(){
-  const row = document.querySelector('.cat-row');
-  if(!row) return;
+  // Left filters accordion
+  function toggleFacet(btn){
+    const box = btn.parentElement.querySelector('.facet-content');
+    const icon = btn.querySelector('i');
+    const open = box.style.display === 'block';
+    box.style.display = open ? 'none' : 'block';
+    icon.className = open ? 'fa fa-plus' : 'fa fa-minus';
+  }
 
-  let isDown=false, startX=0, scrollLeft=0;
+  // Drag scroll for categories row
+  (function(){
+    const row = document.querySelector('.cat-row');
+    if(!row) return;
+    let isDown=false, startX=0, scrollLeft=0;
+    row.addEventListener('mousedown', e=>{
+      isDown=true; row.classList.add('dragging');
+      startX = e.pageX - row.offsetLeft;
+      scrollLeft = row.scrollLeft;
+    });
+    ['mouseleave','mouseup'].forEach(ev=>{
+      row.addEventListener(ev, ()=>{ isDown=false; row.classList.remove('dragging'); });
+    });
+    row.addEventListener('mousemove', e=>{
+      if(!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - row.offsetLeft;
+      const walk = (x - startX);
+      row.scrollLeft = scrollLeft - walk;
+    });
+  })();
 
-  row.addEventListener('mousedown', e=>{
-    isDown=true; row.classList.add('dragging');
-    startX = e.pageX - row.offsetLeft;
-    scrollLeft = row.scrollLeft;
-  });
-  ['mouseleave','mouseup'].forEach(ev=>{
-    row.addEventListener(ev, ()=>{ isDown=false; row.classList.remove('dragging'); });
-  });
-  row.addEventListener('mousemove', e=>{
-    if(!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - row.offsetLeft;
-    const walk = (x - startX);
-    row.scrollLeft = scrollLeft - walk;
-  });
-})();
+  // Smooth close then go to Contact Us
+  (function(){
+    const contact = document.getElementById('contactLink');
+    if(!contact) return;
+    contact.addEventListener('click', function (e) {
+      e.preventDefault();
+      try { closeSidebar(); } catch(e){}
+      setTimeout(()=>{ window.location.href = 'contact-us.html'; }, 280);
+    });
+  })();
 
-    <script>
-// تحويل ناعم: سكّر السايدبار ثم روح لصفحة Contact Us
-(function(){
-  const contact = document.getElementById('contactLink');
-  if(!contact) return;
-  contact.addEventListener('click', function (e) {
-    e.preventDefault();
-    try { closeSidebar(); } catch(e){}
-    setTimeout(()=>{ window.location.href = 'contact-us.html'; }, 280); // نفس زمن الأنيميشن
-  });
-})();
-
-    <script src="loyalty.js"></script>
-<script>
-// نفترض إنك تحفظ بيانات المستخدم بعد اللوق إن داخل localStorage
-// عدّل المفاتيح حسب مشروعك
-const userEmail = localStorage.getItem('userEmail') || 'guest@example.com';
-const userPhone = localStorage.getItem('userPhone') || '00000000';
-
-// جيب/أنشئ العميل
-const customer = Loyalty.getOrCreateCustomer({ email: userEmail, phone: userPhone });
-
-// (اختياري) مثال إضافة نقاط من آخر عملية (لو تبغى تعرض تقدّم)
-//// Loyalty.accruePoints(customer, 12.750, [{size:'L', qty:1}]);
-
-// أرندر البادج
-(function renderBadge() {
-  const t = Loyalty.getTier(customer.points);
-  const el = document.getElementById('navy-points-badge');
-  if (!el) return;
-  el.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #e7e3dc;border-radius:10px;background:#fff;">
-      <div style="width:36px;height:36px;border-radius:50%;background:${t.color};"></div>
-      <div style="line-height:1.25">
-        <div style="font-weight:600;">Navy Points • ${t.name}</div>
-        <div style="font-size:12px;color:#6b6b6b;">${customer.points} pts • ${t.discountPct}% off on preferred sizes</div>
-      </div>
-    </div>
-  `;
-})();
-  
-</script>
-
-  // اختياري: سكّر البانل قبل التحويل
-  const link = document.getElementById('accountSettingsLink');
-  if (link) {
+  // Close profile panel before going to account settings
+  (function(){
+    const link = document.getElementById('accountSettingsLink');
+    if(!link) return;
     link.addEventListener('click', function () {
       try { closeProfileMenu(); } catch(e) {}
-      // ما يحتاج preventDefault — خله يحوّل طبيعي
     });
-  }
+  })();
+</script>
+
+<!-- لازم يكون قبل استخدام Loyalty -->
+<script src="loyalty.js"></script>
+
+<script>
+  // بيانات المستخدم (عدّل لو عندك مفاتيح مختلفة)
+  const userEmail = localStorage.getItem('userEmail') || 'guest@example.com';
+  const userPhone = localStorage.getItem('userPhone') || '00000000';
+
+  // إنشاء/جلب العميل
+  const customer = Loyalty.getOrCreateCustomer({ email: userEmail, phone: userPhone });
+
+  // رسم البادج
+  (function renderBadge() {
+    const t = Loyalty.getTier(customer.points);
+    const el = document.getElementById('navy-points-badge');
+    if (!el) return;
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #e7e3dc;border-radius:10px;background:#fff;">
+        <div style="width:36px;height:36px;border-radius:50%;background:${t.color};"></div>
+        <div style="line-height:1.25">
+          <div style="font-weight:600;">Navy Points • ${t.name}</div>
+          <div style="font-size:12px;color:#6b6b6b;">${customer.points} pts • ${t.discountPct}% off on preferred sizes</div>
+        </div>
+      </div>
+    `;
+  })();
 </script>
 
 </body>
