@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -8,7 +7,7 @@
   <link rel="stylesheet" href="style.css" />
   <style>
     .cart-container {
-      max-width: 600px;
+      max-width: 680px;
       margin: 40px auto;
       padding: 20px;
       background: #fff;
@@ -18,8 +17,22 @@
     .cart-item {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 15px;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: center;
     }
+    .cart-line-left{display:flex;flex-direction:column;gap:4px}
+    .muted{color:#666;font-size:13px}
+    .totals{
+      margin-top: 16px;
+      border-top: 1px solid #eee;
+      padding-top: 12px;
+      display: grid;
+      gap: 6px;
+      font-size: 15px;
+    }
+    .row{display:flex;justify-content:space-between}
+    .grand{font-weight:700}
     .btn-remove {
       color: red;
       border: none;
@@ -36,40 +49,155 @@
       text-align: center;
       text-decoration: none;
     }
+    /* صندوق ملخص الولاء */
+    #loyalty-summary{
+      margin-top: 12px;
+      border:1px solid #e7e3dc;
+      border-radius:10px;
+      padding:12px;
+      background:#fffdf9;
+      display:none;
+      font-size:14px;
+      line-height:1.5;
+    }
   </style>
 </head>
 <body>
   <div class="cart-container">
     <h2>🛒 سلة المشتريات</h2>
+
     <div id="cart-items"></div>
+
+    <!-- ملخص المجموع والخصم -->
+    <div class="totals">
+      <div class="row"><span>المجموع الفرعي</span><span id="cart-subtotal">KD 0.000</span></div>
+      <div id="loyalty-summary">
+        <div id="loyalty-summary-text"></div>
+      </div>
+      <div class="row grand"><span>الإجمالي</span><span id="cart-total">KD 0.000</span></div>
+    </div>
+
     <a href="#" class="btn-send" id="send-whatsapp" target="_blank">إرسال الطلب عبر واتساب</a>
   </div>
 
+  <!-- سكربت منطق النقاط -->
+  <script src="loyalty.js"></script>
+
   <script>
+    // 1) قراءة السلة
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     const cartDiv = document.getElementById('cart-items');
-    let message = 'مرحباً، أود طلب المنتجات التالية:%0A';
 
+    // 2) معلومات المستخدم (بدّلها حسب نظامك)
+    const userEmail = localStorage.getItem('userEmail') || 'guest@example.com';
+    const userPhone = localStorage.getItem('userPhone') || '00000000';
+    const customer = Loyalty.getOrCreateCustomer({ email: userEmail, phone: userPhone });
+
+    // 3) عرض العناصر
     if (cart.length === 0) {
       cartDiv.innerHTML = '<p>السلة فارغة.</p>';
       document.getElementById('send-whatsapp').style.display = 'none';
     } else {
-      cart.forEach((item, index) => {
-        cartDiv.innerHTML += `
-          <div class="cart-item">
-            <span>${item.name} × ${item.qty} = KD ${(item.price * item.qty).toFixed(3)}</span>
+      cartDiv.innerHTML = cart.map((item, index) => {
+        const qty = item.qty || 1;
+        const price = Number(item.price || 0);
+        const size  = (item.size || 'ONE SIZE').toUpperCase();
+        const lineTotal = (price * qty).toFixed(3);
+        return `
+          <div class="cart-item" data-index="${index}">
+            <div class="cart-line-left">
+              <span>${item.name} × ${qty} = KD ${lineTotal}</span>
+              <span class="muted">المقاس: ${size}</span>
+            </div>
             <button class="btn-remove" onclick="removeItem(${index})">حذف</button>
           </div>`;
-        message += `- ${item.name} × ${item.qty} = KD ${(item.price * item.qty).toFixed(3)}%0A`;
-      });
-      document.getElementById('send-whatsapp').href = 'https://wa.me/96555410070?text=' + message;
+      }).join('');
     }
 
+    // 4) تحويل السلة لصيغة الحساب
+    function getCartLines() {
+      return cart.map(it => ({
+        priceKwd: Number(it.price || 0),
+        qty: Number(it.qty || 1),
+        size: (it.size || 'ONE SIZE').toUpperCase()
+      }));
+    }
+
+    // 5) حساب المجموع + خصم الولاء
+    function recomputeTotals() {
+      const lines = getCartLines();
+
+      // مجموع فرعي
+      const subtotal = lines.reduce((s, l) => s + (l.priceKwd * l.qty), 0);
+      document.getElementById('cart-subtotal').textContent = 'KD ' + subtotal.toFixed(3);
+
+      // احسب الخصم بناءً على المقاسات المفضلة + القيود
+      const result = Loyalty.computeDiscount(customer, lines);
+
+      // أظهر ملخص الولاء
+      const box = document.getElementById('loyalty-summary');
+      const txt = document.getElementById('loyalty-summary-text');
+
+      let discount = 0;
+      if (result.discountKwd > 0) {
+        discount = result.discountKwd;
+        box.style.display = 'block';
+        txt.innerHTML = `
+          المستوى: <b>${result.tier.name}</b> — خصم ${result.pct}% على المقاسات المفضلة<br>
+          مبلغ مؤهل: <b>KD ${result.eligibleSubtotal.toFixed(3)}</b><br>
+          الخصم المطبق: <b>KD ${result.discountKwd.toFixed(3)}</b> <span style="color:#666">(${result.reason})</span>
+        `;
+      } else {
+        // ممكن تعرض السبب أو تخفي الصندوق
+        box.style.display = 'none';
+        txt.innerHTML = '';
+      }
+
+      // إجمالي بعد الخصم
+      const grand = Math.max(0, subtotal - discount);
+      document.getElementById('cart-total').textContent = 'KD ' + grand.toFixed(3);
+
+      // جهّز رسالة الواتساب
+      prepareWhatsapp(subtotal, discount, grand);
+    }
+
+    // 6) رسالة الواتساب
+    function prepareWhatsapp(subtotal, discount, grand) {
+      let message = 'مرحباً، أود طلب المنتجات التالية:%0A';
+      cart.forEach(item => {
+        const qty = item.qty || 1;
+        const price = Number(item.price || 0);
+        const size  = (item.size || 'ONE SIZE').toUpperCase();
+        message += `- ${item.name} × ${qty} (${size}) = KD ${(price*qty).toFixed(3)}%0A`;
+      });
+      message += `%0Aالمجموع الفرعي: KD ${subtotal.toFixed(3)}%0A`;
+      if (discount > 0) {
+        message += `خصم الولاء: KD ${discount.toFixed(3)}%0A`;
+      }
+      message += `الإجمالي المستحق: KD ${grand.toFixed(3)}%0A`;
+
+      document.getElementById('send-whatsapp').href =
+        'https://wa.me/96555410070?text=' + message;
+    }
+
+    // 7) حذف عنصر
     function removeItem(index) {
       cart.splice(index, 1);
       localStorage.setItem('cart', JSON.stringify(cart));
+      // أعد تحميل الصفحة أو أعد رسمها
       location.reload();
     }
+    window.removeItem = removeItem; // علشان الزر يقدر يشوفها
+
+    // 8) عند الضغط على زر الإرسال: ثبّت الخصم في سجّل الشهر
+    document.getElementById('send-whatsapp').addEventListener('click', function(){
+      const result = Loyalty.computeDiscount(customer, getCartLines());
+      Loyalty.applyDiscount(customer, result.discountKwd || 0);
+      // هنا تكمل الإرسال (اللينك يفتح واتساب تلقائياً)
+    });
+
+    // 9) أول تحميل — احسب
+    recomputeTotals();
   </script>
 </body>
 </html>
