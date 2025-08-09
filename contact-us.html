@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us - TryNavy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#001f3f;      /* لون TryNavy */
+      --ink:#2c2c2c;       /* نص غامق */
+      --muted:#6b6b6b;     /* نص خافت */
+      --line:#e7e3dc;      /* خطوط خفيفة مثل هولستر */
+      --sand:#f8f6f3;      /* كرت خلفية فاتح */
+      --paper:#ffffff;
+      --dark:#0f1215;      /* للشريط السفلي الداكن */
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Barlow',sans-serif;background:var(--paper);color:var(--ink)}
+
+    /* ===== Header مطابق لباقي صفحاتك ===== */
+    .navbar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#fff;border-bottom:1px solid #ddd}
+    .nav-left,.nav-right{display:flex;align-items:center;gap:16px}
+    .nav-icon{font-size:20px;color:var(--navy);cursor:pointer}
+    .logo{height:60px}
+
+    .wrap{max-width:980px;margin:0 auto;padding:0 16px}
+
+    /* ===== قسم HELP (الأيقونة + العنوان + Sign In) ===== */
+    .help-head{display:flex;flex-direction:column;align-items:center;padding:18px 0 8px}
+    .help-icon{font-size:40px;margin-top:8px;color:#3a3a3a}
+    .help-title{font-size:34px;font-weight:700;margin:10px 0 12px}
+    .sign-btn{
+      width:100%;max-width:520px;border:2px solid #e5e5e5;border-radius:30px;
+      padding:12px 18px;text-align:center;font-weight:700;cursor:pointer;
+      background:#fff;color:#111;transition:.2s;
+    }
+    .sign-btn:hover{border-color:#cfcfcf}
+
+    /* ===== Hi, How Can We Help? + البطاقات ===== */
+    .section-title{font-size:28px;font-weight:700;margin:18px 0 8px}
+    .card-list{background:var(--sand);border-radius:12px;padding:12px;margin-bottom:22px}
+    .card{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:16px 12px;border-bottom:1px solid var(--line);font-weight:600;
+      text-decoration:none;color:inherit;
+    }
+    .card:last-child{border-bottom:0}
+    .card i{font-size:14px}
+
+    /* ===== Quick Answers ===== */
+    .qa{margin-top:6px}
+    .qa h3{font-size:20px;margin:10px 0 12px}
+    .qa-group{border-top:1px solid var(--line);padding:14px 0}
+    .qa-group:first-of-type{border-top:0}
+    .qa-title{display:flex;align-items:center;gap:10px;font-weight:700}
+    .qa-title i{font-size:18px}
+    .qa-links{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+    .qa a{color:var(--ink);text-decoration:none}
+    .qa a:hover{text-decoration:underline}
+    .muted{color:var(--muted)}
+
+    /* ===== الشريط الداكن: أيقونات يسار + أزرار يمين ===== */
+    .cta-band{background:var(--dark);color:#fff;margin:26px 0 0;padding:28px 16px}
+    .cta-wrap{max-width:980px;margin:0 auto}
+    .cta-grid{
+      display:grid;
+      grid-template-columns:56px 1fr; /* يسار أيقونات / يمين أزرار */
+      gap:18px;
+      align-items:flex-start;
+      max-width:700px; /* مقاس قريب من هولستر بالموبايل */
+      margin:0 auto;
+    }
+    .cta-icons{list-style:none;margin:0;padding:4px 0;display:flex;flex-direction:column;gap:22px}
+    .cta-icons li{display:flex;align-items:center;justify-content:center;height:54px}
+    .cta-icons i{font-size:22px;color:#fff}
+
+    .btn-stack{display:flex;flex-direction:column;gap:16px}
+    .cta-btn{
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      width:100%; height:54px;
+      padding:0 18px; border-radius:999px;
+      border:2px solid #fff; background:transparent; color:#fff;
+      font-weight:700; text-decoration:none; transition:.2s;
+    }
+    .cta-btn:hover{background:#fff;color:var(--navy)}
+    .cta-btn i{font-size:18px}
+    .cta-btn .num{font-weight:700;white-space:nowrap}
+
+    .site-foot{display:flex;justify-content:center;align-items:center;padding:22px 0;color:#555}
+    .site-foot a{color:#111;text-decoration:none}
+    .site-foot a:hover{text-decoration:underline}
+
+    @media (min-width:480px){
+      .cta-grid{max-width:820px}
+    }
+/* ===== Quick Answers (نسخة هولستر) ===== */
+.qa{margin-top:6px}
+.qa h3{font-size:20px;margin:10px 0 14px}
+
+.qa-sec{
+  padding:16px 0 0;
+  border-top:1px solid #e7e3dc;   /* خط فوق كل سيكشن */
+}
+.qa-sec:first-of-type{ border-top:0; }
+
+.qa-head{
+  display:flex; align-items:center; gap:12px;
+  font-weight:700; font-size:18px; color:#2c2c2c;
+  padding-bottom:12px;
+  border-bottom:1px solid #e7e3dc; /* الخط اللي تبيه تحت العنوان */
+}
+.qa-head i{font-size:18px}
+
+/* الروابط/الأزرار تحت كل عنوان */
+.qa-list{ list-style:none; margin:0; padding:0; background:#fff; }
+.qa-item{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 0;
+  border-bottom:1px solid #e7e3dc;
+  text-decoration:none; color:#2c2c2c;
+}
+.qa-item:last-child{ border-bottom:0; }
+.qa-item span{ font-size:16px; }
+.qa-item i{ font-size:14px; color:#2c2c2c; }
+.qa-item:active{ opacity:.7; } /* تفاعل خفيف للموبايل */
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="navbar">
+    <div class="nav-left">
+      <i class="fas fa-bars nav-icon" onclick="history.back()"></i>
+      <i class="fas fa-search nav-icon" onclick="window.location.href='search.html'"></i>
+    </div>
+    <img src="navvy.png" alt="NAVY" class="logo">
+    <div class="nav-right">
+      <i class="fas fa-user nav-icon" onclick="window.location.href='login.html'"></i>
+      <a href="cart.html" style="position:relative"><i class="fas fa-shopping-bag nav-icon"></i></a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <!-- HELP -->
+    <div class="help-head">
+      <i class="fa-regular fa-circle-question help-icon"></i>
+      <div class="help-title">Help</div>
+      <button class="sign-btn" onclick="window.location.href='login.html'">Sign In</button>
+      <div class="muted" style="margin-top:8px;font-size:14px;">Sign in to manage your orders.</div>
+    </div>
+
+    <!-- How Can We Help -->
+    <div class="section-title">Hi, How Can We Help?</div>
+    <div class="card-list" role="list">
+      <a class="card" href="#"><span>Track My Order</span><i class="fa-solid fa-chevron-right"></i></a>
+      <a class="card" href="#"><span>Start My Return</span><i class="fa-solid fa-chevron-right"></i></a>
+      <a class="card" href="#"><span>Track My Return</span><i class="fa-solid fa-chevron-right"></i></a>
+      <a class="card" href="#"><span>Look Up My Order</span><i class="fa-solid fa-chevron-right"></i></a>
+      <a class="card" href="#"><span>Check Gift Card Balance</span><i class="fa-solid fa-chevron-right"></i></a>
+    </div>
+
+    <!-- Quick Answers -->
+    <div class="qa">
+  <h3>Quick Answers</h3>
+
+  <!-- Returns & Exchanges -->
+  <section class="qa-sec">
+    <div class="qa-head">
+      <i class="fa-solid fa-rotate-left"></i>
+      <div>Returns & Exchanges</div>
+    </div>
+    <ul class="qa-list">
+      <li>
+        <a class="qa-item" href="online-returns.html">
+          <span>Online Returns & Exchanges</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qa-item" href="in-store-returns.html">
+          <span>In Store Returns & Exchanges</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Order Help -->
+  <section class="qa-sec">
+    <div class="qa-head">
+      <i class="fa-regular fa-file-lines"></i>
+      <div>Order Help</div>
+    </div>
+    <ul class="qa-list">
+      <li>
+        <a class="qa-item" href="change-or-cancel.html">
+          <span>Change or Cancel My Order</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qa-item" href="order-issue.html">
+          <span>Issue with My Existing Order</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Shopping Assistance -->
+  <section class="qa-sec">
+    <div class="qa-head">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <div>Shopping Assistance</div>
+    </div>
+    <ul class="qa-list">
+      <li>
+        <a class="qa-item" href="cards.html">
+          <span>Cards & E-Cards</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qa-item" href="shipping.html">
+          <span>Shipping & Handling</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qa-item" href="currency.html">
+          <span>Currency</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      </li>
+    </ul>
+  </section>
+</div>
+
+  <!-- CTA dark band (أيقونات يسار + أزرار يمين) -->
+  <div class="cta-band">
+    <div class="cta-wrap">
+      <div class="cta-grid">
+        <!-- عمود الأيقونات (يسار) -->
+        <ul class="cta-icons" aria-hidden="true">
+          <li><i class="fa-regular fa-message"></i></li>
+          <li><i class="fa-regular fa-envelope"></i></li>
+          <li><i class="fa-solid fa-mobile-screen-button"></i></li>
+          <li><i class="fa-brands fa-whatsapp"></i></li>
+        </ul>
+
+        <!-- عمود الأزرار (يمين) -->
+        <div class="btn-stack">
+          <a class="cta-btn" href="#"><span>Chat With Us</span></a>
+          <a class="cta-btn" href="mailto:info@trynavy.com"><span>Email Us</span></a>
+          <a class="cta-btn" href="tel:+96555410070"><span>Call Us</span></a>
+          <a class="cta-btn" href="https://wa.me/96555410070" target="_blank">
+            <span>WhatsApp&nbsp;<span class="num">+965 5541 0070</span></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- tiny foot like hollisterco.com -->
+  <div class="site-foot">
+    <span>hollisterco.com</span>
+  </div>
+</body>
+</html>

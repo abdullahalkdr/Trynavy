@@ -277,7 +277,6 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
   </style>
 </head>
 <body>
-
   <!-- Header -->
   <div class="navbar">
     <div class="nav-left">
@@ -295,6 +294,9 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
       </a>
     </div>
   </div>
+
+  <!-- Navy Points badge (مكانه الجديد بعد الهيدر مباشرة) -->
+  <div id="navy-points-badge" style="max-width:420px;margin:12px auto 20px;"></div>
 
   <!-- Profile Sidebar -->
 <div id="profileMenu" style="position:fixed;top:0;right:-100%;width:70%;height:100vh;background:#fff;box-shadow:-2px 0 5px rgba(0,0,0,.2);transition:right .3s;z-index:1001;padding:25px 20px;border-top-left-radius:25px;border-bottom-left-radius:25px;font-size:12px;">
@@ -337,7 +339,7 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
     <div id="submenu-sale" class="submenu"><a href="#">Offers</a><a href="#">Outlet</a></div>
     <div class="menu-item" onclick="toggleSubmenu('purpose')"><span class="menu-title">Purpose</span><i id="arrow-purpose" class="fas fa-chevron-down arrow-icon"></i></div>
     <div id="submenu-purpose" class="submenu"><a href="#">Sustainability</a><a href="#">Our Story</a></div>
-    <a href="#">Help</a><a href="#">Privacy & Terms</a><a href="#">About Us</a><a href="#">Contact Us</a>
+    <a href="#">Help</a><a href="#">Privacy & Terms</a><a href="#">About Us</a><a href="contact-us.html" id="contactLink">Contact Us</a>
   </div>
 
   <!-- Tagline -->
@@ -658,56 +660,109 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
   </footer>
 
   <script>
-    function openSidebar(){document.getElementById("sidebar").style.width="70%";document.getElementById("sidebarOverlay").style.display="block";}
-    function closeSidebar(){document.getElementById("sidebar").style.width="0";document.getElementById("sidebarOverlay").style.display="none";}
-    function updateCartCount(){let cart=JSON.parse(localStorage.getItem('cart'))||[];let total=cart.reduce((s,i)=>s+(i.qty||1),0);document.getElementById('cart-count').textContent=total;} updateCartCount();
-    function toggleSubmenu(id){const s=document.getElementById(`submenu-${id}`);const a=document.getElementById(`arrow-${id}`);if(s.style.display==="block"){s.style.display="none";a.classList.remove("rotate");}else{s.style.display="block";a.classList.add("rotate");}}
-    function openProfileMenu(){document.getElementById("profileMenu").style.right="0";document.getElementById("profileOverlay").style.display="block";}
-    function closeProfileMenu(){document.getElementById("profileMenu").style.right="-100%";document.getElementById("profileOverlay").style.display="none";}
+  // Sidebar + overlays
+  function openSidebar(){document.getElementById("sidebar").style.width="70%";document.getElementById("sidebarOverlay").style.display="block";}
+  function closeSidebar(){document.getElementById("sidebar").style.width="0";document.getElementById("sidebarOverlay").style.display="none";}
+  function openProfileMenu(){document.getElementById("profileMenu").style.right="0";document.getElementById("profileOverlay").style.display="block";}
+  function closeProfileMenu(){document.getElementById("profileMenu").style.right="-100%";document.getElementById("profileOverlay").style.display="none";}
 
-    // Facets accordion (left filters)
-    function toggleFacet(btn) {
-  const box = btn.parentElement.querySelector('.facet-content');
-  const icon = btn.querySelector('i');
-  const open = box.style.display === 'block';
+  // Cart count
+  function updateCartCount(){
+    let cart=JSON.parse(localStorage.getItem('cart'))||[];
+    let total=cart.reduce((s,i)=>s+(i.qty||1),0);
+    const el = document.getElementById('cart-count');
+    if(el) el.textContent=total;
+  }
+  updateCartCount();
 
-  box.style.display = open ? 'none' : 'block';
-  icon.className = open ? 'fa fa-plus' : 'fa fa-minus';
-}
+  // Sidebar submenus
+  function toggleSubmenu(id){
+    const s=document.getElementById(`submenu-${id}`);
+    const a=document.getElementById(`arrow-${id}`);
+    if(!s||!a) return;
+    const open = s.style.display==="block";
+    s.style.display = open?"none":"block";
+    a.classList.toggle("rotate", !open);
+  }
 
-  </script>
-  <script>
-(function(){
-  const row = document.querySelector('.cat-row');
-  if(!row) return;
+  // Left filters accordion
+  function toggleFacet(btn){
+    const box = btn.parentElement.querySelector('.facet-content');
+    const icon = btn.querySelector('i');
+    const open = box.style.display === 'block';
+    box.style.display = open ? 'none' : 'block';
+    icon.className = open ? 'fa fa-plus' : 'fa fa-minus';
+  }
 
-  let isDown=false, startX=0, scrollLeft=0;
+  // Drag scroll for categories row
+  (function(){
+    const row = document.querySelector('.cat-row');
+    if(!row) return;
+    let isDown=false, startX=0, scrollLeft=0;
+    row.addEventListener('mousedown', e=>{
+      isDown=true; row.classList.add('dragging');
+      startX = e.pageX - row.offsetLeft;
+      scrollLeft = row.scrollLeft;
+    });
+    ['mouseleave','mouseup'].forEach(ev=>{
+      row.addEventListener(ev, ()=>{ isDown=false; row.classList.remove('dragging'); });
+    });
+    row.addEventListener('mousemove', e=>{
+      if(!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - row.offsetLeft;
+      const walk = (x - startX);
+      row.scrollLeft = scrollLeft - walk;
+    });
+  })();
 
-  row.addEventListener('mousedown', e=>{
-    isDown=true; row.classList.add('dragging');
-    startX = e.pageX - row.offsetLeft;
-    scrollLeft = row.scrollLeft;
-  });
-  ['mouseleave','mouseup'].forEach(ev=>{
-    row.addEventListener(ev, ()=>{ isDown=false; row.classList.remove('dragging'); });
-  });
-  row.addEventListener('mousemove', e=>{
-    if(!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - row.offsetLeft;
-    const walk = (x - startX);
-    row.scrollLeft = scrollLeft - walk;
-  });
-})();
+  // Smooth close then go to Contact Us
+  (function(){
+    const contact = document.getElementById('contactLink');
+    if(!contact) return;
+    contact.addEventListener('click', function (e) {
+      e.preventDefault();
+      try { closeSidebar(); } catch(e){}
+      setTimeout(()=>{ window.location.href = 'contact-us.html'; }, 280);
+    });
+  })();
 
-  // اختياري: سكّر البانل قبل التحويل
-  const link = document.getElementById('accountSettingsLink');
-  if (link) {
+  // Close profile panel before going to account settings
+  (function(){
+    const link = document.getElementById('accountSettingsLink');
+    if(!link) return;
     link.addEventListener('click', function () {
       try { closeProfileMenu(); } catch(e) {}
-      // ما يحتاج preventDefault — خله يحوّل طبيعي
     });
-  }
+  })();
+</script>
+
+<!-- لازم يكون قبل استخدام Loyalty -->
+<script src="loyalty.js"></script>
+
+<script>
+  // بيانات المستخدم (عدّل لو عندك مفاتيح مختلفة)
+  const userEmail = localStorage.getItem('userEmail') || 'guest@example.com';
+  const userPhone = localStorage.getItem('userPhone') || '00000000';
+
+  // إنشاء/جلب العميل
+  const customer = Loyalty.getOrCreateCustomer({ email: userEmail, phone: userPhone });
+
+  // رسم البادج
+  (function renderBadge() {
+    const t = Loyalty.getTier(customer.points);
+    const el = document.getElementById('navy-points-badge');
+    if (!el) return;
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #e7e3dc;border-radius:10px;background:#fff;">
+        <div style="width:36px;height:36px;border-radius:50%;background:${t.color};"></div>
+        <div style="line-height:1.25">
+          <div style="font-weight:600;">Navy Points • ${t.name}</div>
+          <div style="font-size:12px;color:#6b6b6b;">${customer.points} pts • ${t.discountPct}% off on preferred sizes</div>
+        </div>
+      </div>
+    `;
+  })();
 </script>
 
 </body>

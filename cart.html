@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="ltr">
 <head>
@@ -6,249 +7,72 @@
   <title>سلة المشتريات - TryNavy</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
-    :root{
-      --navy:#001f3f;
-      --text:#111;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --bg:#f8fafc;
-      --btn:#0a66c2;
-      --btn-hover:#0956a3;
-      --radius:8px;
+    .cart-container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
     }
-
-    /* Layout */
-    .page{
-      max-width:1120px;margin:24px auto;padding:0 16px;
-      display:grid;grid-template-columns:1fr 360px;gap:28px;
+    .btn-remove {
+      color: red;
+      border: none;
+      background: none;
+      cursor: pointer;
     }
-    @media (max-width:992px){ .page{grid-template-columns:1fr} }
-
-    /* Left: Shopping Bag */
-    h1{font-size:28px;margin:8px 0 20px 0;font-weight:800}
-    .bag{
-      border:1px solid var(--border);border-radius:var(--radius);
-      padding:0 0 8px 0;
+    .btn-send {
+      display: block;
+      margin-top: 20px;
+      background: #001f3f;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 5px;
+      text-align: center;
+      text-decoration: none;
     }
-    .bag-tabs{
-      display:flex;gap:32px;padding:14px 20px;border-bottom:1px solid var(--border);
-      font-weight:700;
-    }
-    .bag-tabs .active{border-bottom:2px solid #000;padding-bottom:12px}
-    .item{
-      display:grid;grid-template-columns:116px 1fr 24px;gap:16px;
-      padding:16px 20px;border-bottom:1px solid var(--border);
-      align-items:center;
-    }
-    .thumb{
-      width:116px;height:116px;border:1px solid var(--border);border-radius:6px;
-      background:#fff center/cover no-repeat;
-    }
-    .title{font-weight:700;margin:0 0 6px 0}
-    .meta{font-size:12px;color:var(--muted);margin-bottom:8px}
-    .price{font-weight:800;margin:6px 0}
-    .row{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
-    .row .dot{width:10px;height:10px;border-radius:50%;border:1px solid #ccc;display:inline-block}
-    .actions{display:flex;gap:16px;margin-top:10px}
-    .link{font-size:13px;color:#1f2937;text-decoration:underline;cursor:pointer}
-    .remove{
-      background:none;border:none;font-size:18px;cursor:pointer;color:#6b7280;
-    }
-    .notice{
-      padding:14px 20px;font-size:12px;color:#374151;display:flex;gap:8px;align-items:flex-start;
-    }
-
-    /* Right: Order Summary */
-    .panel{
-      border:1px solid var(--border);border-radius:var(--radius);padding:16px;background:#fff;
-      position:sticky;top:16px;
-    }
-    .acc{
-      border-top:1px solid var(--border);
-    }
-    .acc:first-of-type{border-top:0}
-    .acc-hd{
-      display:flex;justify-content:space-between;align-items:center;padding:14px 0;cursor:pointer;font-weight:700;
-    }
-    .acc-bd{display:none;padding:0 0 14px 0;color:var(--muted);font-size:14px}
-    .summary-line{
-      display:flex;justify-content:space-between;font-size:14px;padding:6px 0;color:#374151;
-    }
-    .summary-total{font-weight:800;color:#000;border-top:1px solid var(--border);margin-top:6px;padding-top:10px}
-    .btn{
-      width:100%;padding:12px 16px;border-radius:999px;border:none;cursor:pointer;
-      background:var(--btn);color:#fff;font-weight:800;font-size:16px;margin-top:12px;
-    }
-    .btn:hover{background:var(--btn-hover)}
-    .paypal{
-      margin:10px 0 0 0;background:#fff;border:1px solid var(--border);border-radius:999px;padding:10px 14px;
-      display:flex;justify-content:center;align-items:center;gap:10px;font-weight:700;cursor:pointer;
-    }
-    .help{
-      margin-top:18px;border-top:1px solid var(--border);padding-top:14px;font-size:14px;color:#374151;
-    }
-    .help .line{display:flex;align-items:center;gap:10px;margin:6px 0}
-
-    /* small helpers */
-    .muted{color:var(--muted)}
   </style>
 </head>
 <body>
-
-  <div class="page">
-    <!-- LEFT -->
-    <div>
-      <h1>Shopping Bag</h1>
-
-      <div class="bag">
-        <div class="bag-tabs">
-          <div class="active">In Bag (<span id="countInBag">0</span>)</div>
-          <div>Saved for Later (<span id="countSaved">0</span>)</div>
-        </div>
-
-        <div id="bagItems"></div>
-
-        <div class="notice">
-          <i class="fa-regular fa-circle-question"></i>
-          <div>
-            <div style="font-weight:800">Don't Miss Out!</div>
-            <div class="muted">Items in bag are not held and may sell out.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RIGHT -->
-    <aside>
-      <div class="panel">
-        <div style="font-weight:800;margin-bottom:8px">Order Summary</div>
-        <div class="summary-line"><span>Items (<span id="sumCount">0</span>)</span><span id="sumItems">0.000 د.ك</span></div>
-        <div class="summary-line"><span>Promotions</span><span>0 د.ك</span></div>
-        <div class="summary-line summary-total"><span>Subtotal</span><span id="sumTotal">0.000 د.ك</span></div>
-
-        <button class="btn" id="checkoutBtn">Checkout</button>
-        <div class="muted" style="text-align:center;font-size:12px;margin:8px 0">or express checkout with</div>
-        <div class="paypal"><i class="fa-brands fa-paypal"></i> PayPal</div>
-
-        <div class="acc">
-          <div class="acc-hd" data-acc="promos">Promotions <i class="fa-solid fa-plus"></i></div>
-          <div class="acc-bd" id="acc-promos">أدخل كود الخصم إن وُجد.</div>
-        </div>
-        <div class="acc">
-          <div class="acc-hd" data-acc="gift">Gift Receipt <i class="fa-solid fa-plus"></i></div>
-          <div class="acc-bd" id="acc-gift">إضافة بطاقة إهداء للطلب.</div>
-        </div>
-
-        <div class="help">
-          <div style="font-weight:800;margin-bottom:6px">Need Some Help?</div>
-          <div class="line"><i class="fa-solid fa-truck"></i> <a href="#" class="muted">Shipping &amp; Handling</a></div>
-          <div class="line"><i class="fa-solid fa-phone"></i> <span>+1-925-359-2568</span></div>
-          <div class="line muted"><i class="fa-regular fa-rectangle-list"></i> Order <span id="orderNo"></span></div>
-        </div>
-      </div>
-    </aside>
+  <div class="cart-container">
+    <h2>🛒 سلة المشتريات</h2>
+    <div id="cart-items"></div>
+    <a href="#" class="btn-send" id="send-whatsapp" target="_blank">إرسال الطلب عبر واتساب</a>
   </div>
 
+  <!-- سكربت منطق النقاط -->
+  <script src="loyalty.js"></script>
+
   <script>
-    // ---- Data load ----
-    const bag = JSON.parse(localStorage.getItem('cart') || '[]');
-    const saved = JSON.parse(localStorage.getItem('savedForLater') || '[]');
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartDiv = document.getElementById('cart-items');
+    let message = 'مرحباً، أود طلب المنتجات التالية:%0A';
 
-    const bagWrap = document.getElementById('bagItems');
-    const countInBag = document.getElementById('countInBag');
-    const countSaved = document.getElementById('countSaved');
-
-    const sumCount = document.getElementById('sumCount');
-    const sumItems = document.getElementById('sumItems');
-    const sumTotal = document.getElementById('sumTotal');
-
-    countInBag.textContent = bag.length;
-    countSaved.textContent = saved.length;
-
-    // ---- Render items ----
-    if (bag.length === 0){
-      bagWrap.innerHTML = `<div style="padding:20px">السلة فارغة.</div>`;
+    if (cart.length === 0) {
+      cartDiv.innerHTML = '<p>السلة فارغة.</p>';
+      document.getElementById('send-whatsapp').style.display = 'none';
     } else {
-      bagWrap.innerHTML = bag.map((it,idx)=>{
-        const img = it.image || 'https://via.placeholder.com/300x300?text=Item';
-        const size = it.size ? `، ${it.size}` : '';
-        const color = it.color ? `، ${it.color}` : '';
-        const people = Math.floor(Math.random()*6)+5; // 5-10
-        const line = (Number(it.price)||0) * (Number(it.qty)||1);
-        return `
-          <div class="item" data-index="${idx}">
-            <div class="thumb" style="background-image:url('${img}')"></div>
-            <div>
-              <p class="title">${it.name || 'Product Name'}</p>
-              <div class="meta">Men’s ${it.sku || ''}</div>
-              <div class="meta">L${size}${color ? '، '+color : ''}</div>
-              <div class="price">KD ${line.toFixed(3)}</div>
-              <div class="row">
-                <i class="fa-regular fa-thumbs-up"></i>
-                <span>${people} People Just Purchased</span>
-              </div>
-              <div class="actions">
-                <span class="link" onclick="saveForLater(${idx})">Save for Later</span>
-                <span class="link" onclick="editItem(${idx})">Edit</span>
-              </div>
-            </div>
-            <button class="remove" title="Remove" onclick="removeItem(${idx})">&times;</button>
-          </div>
-        `;
-      }).join('');
+      cart.forEach((item, index) => {
+        cartDiv.innerHTML += `
+          <div class="cart-item">
+            <span>${item.name} × ${item.qty} = KD ${(item.price * item.qty).toFixed(3)}</span>
+            <button class="btn-remove" onclick="removeItem(${index})">حذف</button>
+          </div>`;
+        message += `- ${item.name} × ${item.qty} = KD ${(item.price * item.qty).toFixed(3)}%0A`;
+      });
+      document.getElementById('send-whatsapp').href = 'https://wa.me/96555410070?text=' + message;
     }
 
-    // ---- Totals ----
-    const totalQty = bag.reduce((a,b)=> a + (Number(b.qty)||1), 0);
-    const total = bag.reduce((a,b)=> a + (Number(b.price)||0) * (Number(b.qty)||1), 0);
-    sumCount.textContent = totalQty;
-    sumItems.textContent = total.toFixed(3) + ' د.ك';
-    sumTotal.textContent = total.toFixed(3) + ' د.ك';
-
-    // ---- Actions ----
-    function removeItem(i){
-      bag.splice(i,1);
-      localStorage.setItem('cart', JSON.stringify(bag));
+    function removeItem(index) {
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
       location.reload();
     }
-    function saveForLater(i){
-      const item = bag.splice(i,1)[0];
-      const saved = JSON.parse(localStorage.getItem('savedForLater')||'[]');
-      saved.push(item);
-      localStorage.setItem('savedForLater', JSON.stringify(saved));
-      localStorage.setItem('cart', JSON.stringify(bag));
-      location.reload();
-    }
-    function editItem(i){
-      // افتح صفحة المنتج للتعديل (بدّل الرابط حسب موقعك)
-      const p = bag[i];
-      const url = p && p.productUrl ? p.productUrl : 'index.html';
-      window.location.href = url;
-    }
-
-    // ---- Accordions ----
-    document.querySelectorAll('.acc-hd').forEach(h=>{
-      h.addEventListener('click',()=>{
-        const id = 'acc-' + h.dataset.acc;
-        const bd = document.getElementById(id);
-        const open = bd.style.display === 'block';
-        bd.style.display = open ? 'none' : 'block';
-        h.querySelector('i').className = open ? 'fa-solid fa-plus' : 'fa-solid fa-minus';
-      })
-    });
-
-    // ---- Checkout ----
-    document.getElementById('checkoutBtn').addEventListener('click',()=>{
-      alert('هنا يتم ربط بوابة الدفع لاحقاً (Checkout).');
-    });
-
-    // ---- Order number ----
-    const orderNo = '2' + Math.floor(100000000 + Math.random()*900000000);
-    document.getElementById('orderNo').textContent = orderNo;
   </script>
 </body>
 </html>
