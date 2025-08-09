@@ -337,7 +337,7 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
     <div id="submenu-sale" class="submenu"><a href="#">Offers</a><a href="#">Outlet</a></div>
     <div class="menu-item" onclick="toggleSubmenu('purpose')"><span class="menu-title">Purpose</span><i id="arrow-purpose" class="fas fa-chevron-down arrow-icon"></i></div>
     <div id="submenu-purpose" class="submenu"><a href="#">Sustainability</a><a href="#">Our Story</a></div>
-    <a href="#">Help</a><a href="#">Privacy & Terms</a><a href="#">About Us</a><a href="#">Contact Us</a>
+    <a href="#">Help</a><a href="#">Privacy & Terms</a><a href="#">About Us</a><a href="contact-us.html" id="contactLink">Contact Us</a>
   </div>
 
   <!-- Tagline -->
@@ -699,6 +699,19 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
     row.scrollLeft = scrollLeft - walk;
   });
 })();
+
+    <script>
+// تحويل ناعم: سكّر السايدبار ثم روح لصفحة Contact Us
+(function(){
+  const contact = document.getElementById('contactLink');
+  if(!contact) return;
+  contact.addEventListener('click', function (e) {
+    e.preventDefault();
+    try { closeSidebar(); } catch(e){}
+    setTimeout(()=>{ window.location.href = 'contact-us.html'; }, 280); // نفس زمن الأنيميشن
+  });
+})();
+</script>
 
   // اختياري: سكّر البانل قبل التحويل
   const link = document.getElementById('accountSettingsLink');
