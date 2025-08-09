@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us - TryNavy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Barlow', sans-serif;
+      background-color: #fff;
+      color: #001f3f; /* كحلي TryNavy */
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .navbar .logo {
+      font-weight: bold;
+      font-size: 20px;
+      letter-spacing: 1px;
+    }
+
+    .contact-container {
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .contact-container h2 {
+      font-size: 24px;
+      margin-bottom: 25px;
+    }
+
+    .contact-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      border: 2px solid #001f3f;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 600;
+      background: none;
+      color: #001f3f;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .contact-btn:hover {
+      background-color: #001f3f;
+      color: #fff;
+    }
+
+    .contact-btn i {
+      margin-right: 10px;
+      font-size: 18px;
+    }
+
+    .phone-number {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .section {
+      background-color: #f4f4f4;
+      padding: 20px;
+      margin-top: 30px;
+      text-align: left;
+      border-radius: 8px;
+    }
+
+    .section h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .section a {
+      color: #001f3f;
+      text-decoration: none;
+    }
+
+    .section a:hover {
+      text-decoration: underline;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- الهيدر -->
+  <div class="navbar">
+    <i class="fas fa-bars"></i>
+    <div class="logo">NAVY</div>
+    <div>
+      <i class="fas fa-user"></i>
+      <i class="fas fa-shopping-bag" style="margin-left:15px;"></i>
+    </div>
+  </div>
+
+  <!-- المحتوى -->
+  <div class="contact-container">
+    <a href="#" class="contact-btn"><i class="fas fa-comments"></i> Chat With Us</a>
+    <a href="mailto:info@trynavy.com" class="contact-btn"><i class="fas fa-envelope"></i> Email Us</a>
+    <a href="tel:+96555410070" class="contact-btn"><i class="fas fa-phone"></i> Call Us</a>
+    <a href="https://wa.me/96555410070" class="contact-btn"><i class="fab fa-whatsapp"></i> WhatsApp <span class="phone-number">+965 5541 0070</span></a>
+  </div>
+
+  <!-- قسم المساعدة السريعة -->
+  <div class="section">
+    <h3>Quick Answers</h3>
+    <p><a href="#">Returns & Exchanges</a></p>
+    <p><a href="#">Order Help</a></p>
+    <p><a href="#">Shopping Assistance</a></p>
+  </div>
+
+</body>
+</html>
