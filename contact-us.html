@@ -7,124 +7,163 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      font-family: 'Barlow', sans-serif;
-      background-color: #fff;
-      color: #001f3f; /* كحلي TryNavy */
+    :root{
+      --navy:#001f3f;      /* لون TryNavy */
+      --ink:#2c2c2c;       /* نص غامق */
+      --muted:#6b6b6b;     /* نص خافت */
+      --line:#e7e3dc;      /* خطوط خفيفة مثل هولستر */
+      --sand:#f8f6f3;      /* كرت خلفية فاتح */
+      --paper:#ffffff;
+      --dark:#0f1215;      /* للشريط السفلي الداكن */
     }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Barlow',sans-serif;background:var(--paper);color:var(--ink)}
 
-    .navbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 15px;
-      background-color: #fff;
-      border-bottom: 1px solid #ddd;
+    /* ===== Header مطابق لباقي صفحاتك ===== */
+    .navbar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#fff;border-bottom:1px solid #ddd}
+    .nav-left,.nav-right{display:flex;align-items:center;gap:16px}
+    .nav-icon{font-size:20px;color:var(--navy);cursor:pointer}
+    .logo{height:60px}
+
+    .wrap{max-width:980px;margin:0 auto;padding:0 16px}
+
+    /* ===== قسم HELP (الأيقونة + العنوان + Sign In) ===== */
+    .help-head{display:flex;flex-direction:column;align-items:center;padding:18px 0 8px}
+    .help-icon{font-size:40px;margin-top:8px;color:#3a3a3a}
+    .help-title{font-size:34px;font-weight:700;margin:10px 0 12px}
+    .sign-btn{
+      width:100%;max-width:520px;border:2px solid #e5e5e5;border-radius:30px;
+      padding:12px 18px;text-align:center;font-weight:700;cursor:pointer;
+      background:#fff;color:#111;transition:.2s;
     }
+    .sign-btn:hover{border-color:#cfcfcf}
 
-    .navbar .logo {
-      font-weight: bold;
-      font-size: 20px;
-      letter-spacing: 1px;
+    /* ===== Hi, How Can We Help? + البطاقات ===== */
+    .section-title{font-size:28px;font-weight:700;margin:18px 0 8px}
+    .card-list{background:var(--sand);border-radius:12px;padding:12px;margin-bottom:22px}
+    .card{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:16px 12px;border-bottom:1px solid var(--line);font-weight:600;
+      text-decoration:none;color:inherit;
     }
+    .card:last-child{border-bottom:0}
+    .card i{font-size:14px}
 
-    .contact-container {
-      max-width: 500px;
-      margin: 30px auto;
-      padding: 20px;
-      text-align: center;
+    /* ===== Quick Answers ===== */
+    .qa{margin-top:6px}
+    .qa h3{font-size:20px;margin:10px 0 12px}
+    .qa-group{border-top:1px solid var(--line);padding:14px 0}
+    .qa-group:first-of-type{border-top:0}
+    .qa-title{display:flex;align-items:center;gap:10px;font-weight:700}
+    .qa-title i{font-size:18px}
+    .qa-links{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+    .qa a{color:var(--ink);text-decoration:none}
+    .qa a:hover{text-decoration:underline}
+    .muted{color:var(--muted)}
+
+    /* ===== الشريط الداكن: أزرار Chat/Email/Call/WhatsApp ===== */
+    .cta-band{background:var(--dark);color:#fff;margin:26px 0 0;padding:28px 16px}
+    .cta-wrap{max-width:980px;margin:0 auto}
+    .btn-stack{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+    .cta-btn{
+      display:flex;align-items:center;justify-content:center;gap:12px;
+      width:100%;padding:14px 18px;border-radius:30px;border:2px solid #fff;
+      background:transparent;color:#fff;font-weight:700;text-decoration:none;transition:.2s
     }
+    .cta-btn:hover{background:#fff;color:var(--navy)}
+    .cta-btn i{font-size:18px}
 
-    .contact-container h2 {
-      font-size: 24px;
-      margin-bottom: 25px;
+    /* ===== الفوتر الصغير “hollisterco.com” ===== */
+    .site-foot{display:flex;justify-content:center;align-items:center;padding:22px 0;color:#555}
+    .site-foot a{color:#111;text-decoration:none}
+    .site-foot a:hover{text-decoration:underline}
+
+    @media (max-width:600px){
+      .help-title{font-size:32px}
+      .card{padding:14px 10px}
     }
-
-    .contact-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      padding: 15px;
-      margin: 10px 0;
-      border: 2px solid #001f3f;
-      border-radius: 30px;
-      font-size: 16px;
-      font-weight: 600;
-      background: none;
-      color: #001f3f;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-
-    .contact-btn:hover {
-      background-color: #001f3f;
-      color: #fff;
-    }
-
-    .contact-btn i {
-      margin-right: 10px;
-      font-size: 18px;
-    }
-
-    .phone-number {
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    .section {
-      background-color: #f4f4f4;
-      padding: 20px;
-      margin-top: 30px;
-      text-align: left;
-      border-radius: 8px;
-    }
-
-    .section h3 {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
-    .section a {
-      color: #001f3f;
-      text-decoration: none;
-    }
-
-    .section a:hover {
-      text-decoration: underline;
-    }
-
   </style>
 </head>
 <body>
 
-  <!-- الهيدر -->
+  <!-- Header -->
   <div class="navbar">
-    <i class="fas fa-bars"></i>
-    <div class="logo">NAVY</div>
-    <div>
-      <i class="fas fa-user"></i>
-      <i class="fas fa-shopping-bag" style="margin-left:15px;"></i>
+    <div class="nav-left">
+      <i class="fas fa-bars nav-icon" onclick="history.back()"></i>
+      <i class="fas fa-search nav-icon" onclick="window.location.href='search.html'"></i>
+    </div>
+    <img src="navvy.png" alt="NAVY" class="logo">
+    <div class="nav-right">
+      <i class="fas fa-user nav-icon" onclick="window.location.href='login.html'"></i>
+      <a href="cart.html" style="position:relative"><i class="fas fa-shopping-bag nav-icon"></i></a>
     </div>
   </div>
 
-  <!-- المحتوى -->
-  <div class="contact-container">
-    <a href="#" class="contact-btn"><i class="fas fa-comments"></i> Chat With Us</a>
-    <a href="mailto:info@trynavy.com" class="contact-btn"><i class="fas fa-envelope"></i> Email Us</a>
-    <a href="tel:+96555410070" class="contact-btn"><i class="fas fa-phone"></i> Call Us</a>
-    <a href="https://wa.me/96555410070" class="contact-btn"><i class="fab fa-whatsapp"></i> WhatsApp <span class="phone-number">+965 5541 0070</span></a>
+  <div class="wrap">
+    <!-- HELP -->
+    <div class="help-head">
+      <i class="fa-regular fa-circle-question help-icon"></i>
+      <div class="help-title">Help</div>
+      <button class="sign-btn" onclick="window.location.href='login.html'">Sign In</button>
+      <div class="muted" style="margin-top:8px;font-size:14px;">Sign in to manage your orders.</div>
+    </div>
+
+    <!-- How Can We Help -->
+    <div class="section-title">Hi, How Can We Help?</div>
+    <div class="card-list" role="list">
+      <a class="card" href="#"><span>Track My Order</span><i class="fa-solid fa-chevron-right"></i></a>
+      <a class="card" href="#"><span>Start My Return</span><i class="fa-solid fa-chevron-right"></i></a>
+      <a class="card" href="#"><span>Track My Return</span><i class="fa-solid fa-chevron-right"></i></a>
+      <a class="card" href="#"><span>Look Up My Order</span><i class="fa-solid fa-chevron-right"></i></a>
+      <a class="card" href="#"><span>Check Gift Card Balance</span><i class="fa-solid fa-chevron-right"></i></a>
+    </div>
+
+    <!-- Quick Answers -->
+    <div class="qa">
+      <h3>Quick Answers</h3>
+
+      <div class="qa-group">
+        <div class="qa-title"><i class="fa-solid fa-rotate-left"></i> Returns & Exchanges</div>
+        <div class="qa-links">
+          <a href="#">Online Returns & Exchanges</a>
+          <a href="#">In Store Returns & Exchanges</a>
+        </div>
+      </div>
+
+      <div class="qa-group">
+        <div class="qa-title"><i class="fa-regular fa-file-lines"></i> Order Help</div>
+        <div class="qa-links">
+          <a href="#">Change or Cancel My Order</a>
+          <a href="#">Issue with My Existing Order</a>
+        </div>
+      </div>
+
+      <div class="qa-group">
+        <div class="qa-title"><i class="fa-solid fa-bag-shopping"></i> Shopping Assistance</div>
+        <div class="qa-links">
+          <a href="#">Cards & E-Cards</a>
+          <a href="#">Shipping & Handling</a>
+          <a href="#">Currency</a>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- قسم المساعدة السريعة -->
-  <div class="section">
-    <h3>Quick Answers</h3>
-    <p><a href="#">Returns & Exchanges</a></p>
-    <p><a href="#">Order Help</a></p>
-    <p><a href="#">Shopping Assistance</a></p>
+  <!-- CTA dark band -->
+  <div class="cta-band">
+    <div class="cta-wrap">
+      <div class="btn-stack">
+        <a class="cta-btn" href="#"><i class="fa-regular fa-message"></i> Chat With Us</a>
+        <a class="cta-btn" href="mailto:info@trynavy.com"><i class="fa-regular fa-envelope"></i> Email Us</a>
+        <a class="cta-btn" href="tel:+96555410070"><i class="fa-solid fa-phone"></i> Call Us</a>
+        <a class="cta-btn" href="https://wa.me/96555410070" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp&nbsp;&nbsp;+965 5541 0070</a>
+      </div>
+    </div>
   </div>
 
+  <!-- tiny foot like hollisterco.com -->
+  <div class="site-foot">
+    <span>hollisterco.com</span>
+  </div>
 </body>
 </html>
