@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NAVY - Men's Fashion</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; font-family:'Barlow',sans-serif; background:#f4f4f4; }
+
+    .menu-title{font-weight:bold;}
+    .submenu a{font-weight:normal;}
+    .submenu{display:none; padding-left:20px;}
+    .arrow{font-size:16px; transition:.3s}
+    .arrow.rotate{transform:rotate(180deg)}
+
+    /* Header */
+    .navbar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#fff;border-bottom:1px solid #ddd;position:relative}
+    .navbar img.logo{height:60px}
+    .nav-left,.nav-right{display:flex;align-items:center;gap:16px}
+    .nav-icon{font-size:20px;color:#001f3f;cursor:pointer}
+    .cart-count{background:red;color:#fff;font-size:11px;border-radius:50%;padding:2px 6px;position:absolute;top:2px;right:-6px}
+
+    /* App sidebar (menu) */
+    .sidebar{height:100%;width:0;position:fixed;top:0;left:0;z-index:1000;background:#fff;overflow-x:hidden;transition:.3s;padding-top:60px;color:#001f3f;border-top-right-radius:25px;border-bottom-right-radius:25px}
+    .sidebar a{color:#001f3f;padding:12px 20px;text-decoration:none;display:block;font-size:18px;transition:.3s;font-weight:normal}
+    .sidebar .closebtn{position:absolute;top:20px;right:25px;font-size:30px}
+    .menu-item{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;cursor:pointer;color:#001f3f;font-size:18px}
+    .submenu{display:none;flex-direction:column;padding-left:30px;background:#fff}
+    .arrow-icon{font-size:12px;margin-left:30px;transition:.3s}
+    .arrow-icon.rotate{transform:rotate(180deg)}
+
+    .tagline{text-align:center;color:#001f3f;font-weight:500;margin:12px 0 24px}
+
+    /* ====== Shop layout like Hollister ====== */
+    .shop{max-width:1200px;margin:0 auto;padding:0 16px 40px;display:grid;grid-template-columns:1fr;gap:24px}
+    @media (min-width: 992px){
+      .shop{grid-template-columns:260px 1fr;}
+    }
+
+/* ====== Filters: Hollister-like ====== */
+.filters{
+  background: #f8f6f3;           /* نفس لون الخلفية عندهم */
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 5px rgba(0,0,0,.05);
+  color:#2c2c2c;
+}
+
+.filters h3{
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color:#2c2c2c;
+}
+
+/* كل قسم */
+.facet{
+  padding: 12px 0;
+  border-top: 1px solid #e7e3dc; /* فاصل رفيع مثل الصورة */
+}
+.facet:first-of-type{ border-top: 0; }
+
+/* زر الأكورديون */
+.facet-btn{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: 0;
+  padding: 6px 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2c2c2c;
+  cursor: pointer;
+}
+.facet-btn i{ font-size: 14px; }
+
+/* محتوى الخيارات */
+.facet-content{
+  display: none;   /* <-- المهم */
+  padding-top: 6px;
+}
+
+/* العناوين الفرعية (Tops / Bottoms / Other) */
+.facet-content strong{
+  display: block;
+  margin: 10px 0 6px;
+  font-size: 14px;
+  color:#2c2c2c;
+}
+
+/* كل خيار سطر لحاله */
+.facet-content label{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 2px;
+  font-size: 14px;
+  color:#2c2c2c;
+  user-select: none;
+}
+
+/* ستايل صندوق التحديد نفس هولستر */
+.facet-content input[type="checkbox"]{
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #2c2c2c;      /* لون الإطار الداكن */
+  border-radius: 6px;              /* زوايا ناعمة */
+  background: #fff;
+  display: inline-block;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.facet-content input[type="checkbox"]:checked{
+  background: #2c2c2c;            /* يمتلئ داكن عند التحديد */
+  border-color: #2c2c2c;
+}
+
+.facet-content input[type="checkbox"]:checked::after{
+  content: "";
+  position: absolute;
+  left: 6px; top: 2px;
+  width: 6px; height: 12px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* مسافات جانبية لطيفة */
+.filters .facet-content label + label{ margin-top: 2px; }
+
+/* موبايل: تصغير خفيف */
+@media (max-width: 768px){
+  .facet-content label{ padding: 6px 2px; font-size: 13.5px; }
+  .facet-content input[type="checkbox"]{ width: 20px; height: 20px; }
+}
+
+    /* Sort row */
+    .sort-row{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:8px}
+    .sort-row select{padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff}
+
+    /* Product grid */
+    .grid{display:grid;grid-template-columns:1fr;gap:20px}
+    @media (min-width: 700px){ .grid{grid-template-columns:repeat(2,1fr);} }
+    @media (min-width: 992px){ .grid{grid-template-columns:repeat(3,1fr);} }
+
+    /* Promo card spans like Hollister */
+    .promo{position:relative;overflow:hidden;border-radius:12px;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.05)}
+    .promo img{width:100%;display:block}
+    .promo .promo-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font-weight:700;font-size:28px;letter-spacing:.3px;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+    @media (min-width: 992px){ .promo{grid-column:span 1;} }
+    /* لو تبيها أعرض: خليها span 2 */
+    @media (min-width: 1200px){ .promo{grid-column:span 1;} }
+
+    /* Product card */
+    .product{background:#fff;padding:12px;border-radius:12px;box-shadow:0 2px 5px rgba(0,0,0,.05);position:relative}
+    .product .wish{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.9);border:1px solid #eee}
+    .product img{width:100%;border-radius:10px;display:block}
+    .product h2{font-size:16px;color:#111;margin:10px 0 6px}
+    .price{color:#001f3f;font-weight:700;margin-bottom:8px}
+    .swatches{display:flex;gap:6px;align-items:center;margin:8px 0}
+    .swatch{width:16px;height:16px;border-radius:50%;border:1px solid #ccc;background:#ddd}
+    .swatch.more{border:none;width:auto;height:auto;font-size:12px;color:#666}
+
+    footer{text-align:center;font-size:14px;color:#777;margin:40px 0 20px}
+    /* ====== Category Circles Row ====== */
+.cat-row {
+  max-width: 1200px;
+  margin: 0 auto 10px;
+  padding: 0 16px;
+  display: flex;
+  justify-content: flex-start; /* يبدأ من أول الجهة */
+  gap: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  direction: rtl; /* يخلي أول عنصر من اليمين */
+}
+.cat-row::-webkit-scrollbar { display: none; }
+
+.cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #111;
+  min-width: 110px;
+}
+
+.cat .thumb {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  display: block;
+  background: #fff;
+}
+
+.cat .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cat .label {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 400; /* مو bold */
+  text-align: center;
+  color: #2c2c2c;
+  line-height: 1.2;
+}
+
+
+
+/* تأثير hover مثل هولستر */
+.cat:hover .thumb{
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 14px rgba(0,0,0,.12);
+}
+
+/* محاذاة عربية إن رغبت */
+html[dir="rtl"] .cat-row{ direction: rtl; }
+/* تصغير نص الخيارات داخل الفلتر */
+.filters .facet-content label{
+  font-size: 13px;       /* غيّرها 12/13/14 حسب مزاجك */
+  gap: 8px;              /* مسافة أصغر بين المربع والنص */
+  padding: 6px 2px;
+}
+
+/* تصغير حجم المربع نفسه */
+.filters .facet-content input[type="checkbox"]{
+  width: 18px;           /* كان 22px */
+  height: 18px;
+  border-radius: 6px;
+}
+
+/* تصغير علامة الصح داخل المربع بدقة */
+.filters .facet-content input[type="checkbox"]:checked::after{
+  left: 5px;             /* كان 6px */
+  top: 3px;              /* كان 2px */
+  width: 5px;            /* كان 6px */
+  height: 9px;           /* كان 12px */
+  border-width: 0 2px 2px 0; /* نحافة الصح */
+}
+
+/* لو حسّيت إن القاعدة القديمة تغلبها، فعّل !important */
+
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="navbar">
+    <div class="nav-left">
+      <i class="fas fa-bars nav-icon" onclick="openSidebar()"></i>
+      <i class="fas fa-search nav-icon" onclick="window.location.href='search.html'"></i>
+    </div>
+    <img src="navvy.png" alt="NAVY Logo" class="logo" />
+    <div class="nav-right">
+      <button onclick="openProfileMenu()" style="background:none;border:none;cursor:pointer;">
+        <i class="fas fa-user nav-icon"></i>
+      </button>
+      <a href="cart.html" style="position: relative;">
+        <i class="fas fa-shopping-bag nav-icon"></i>
+        <span class="cart-count" id="cart-count">0</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Profile Sidebar -->
+  <div id="profileMenu" style="position:fixed;top:0;right:-100%;width:70%;height:100vh;background:#fff;box-shadow:-2px 0 5px rgba(0,0,0,.2);transition:right .3s;z-index:1001;padding:25px 20px;border-top-left-radius:25px;border-bottom-left-radius:25px;font-size:12px;">
+    <button onclick="closeProfileMenu()" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
+    <h2 style="font-weight:700;color:#001f3f;font-size:20px;margin-bottom:5px;">Your Account</h2>
+    <p style="color:#555;margin-bottom:20px;">Sign in for rewards, easy order tracking and more.</p>
+    <div style="display:flex;gap:8px;margin-bottom:24px;">
+      <a href="login.html" style="flex:1;text-align:center;background:#001f3f;color:#fff;padding:10px 0;border-radius:30px;text-decoration:none;font-weight:600;font-size:13px;">Sign In</a>
+      <a href="signup.html" style="flex:1;text-align:center;color:#001f3f;padding:10px 0;border-radius:30px;border:2px solid #001f3f;text-decoration:none;font-weight:600;font-size:13px;">Join</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <div><div style="font-weight:700;color:#001f3f;">Purchase History</div><div style="color:#666;">Track an order, start a return or exchange</div></div>
+      <div><div style="font-weight:700;color:#001f3f;">My List</div><div style="color:#666;">Your saved items</div></div>
+      <div><div style="font-weight:700;color:#001f3f;">Account Settings</div><div style="color:#666;">Update info, payment, addresses, email preferences</div></div>
+    </div>
+  </div>
+  <div id="sidebarOverlay" onclick="closeSidebar()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999;background:rgba(0,0,0,.3);display:none;"></div>
+  <div id="profileOverlay" onclick="closeProfileMenu()" style="position:fixed;top:0;right:0;width:100vw;height:100vh;z-index:998;background:rgba(0,0,0,.3);display:none;"></div>
+
+  <!-- App Menu Sidebar -->
+  <div id="sidebar" class="sidebar" onclick="event.stopPropagation()">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">×</a>
+    <div class="menu-item" onclick="toggleSubmenu('men')"><span class="menu-title">Men's</span><i id="arrow-men" class="fas fa-chevron-down arrow-icon"></i></div>
+    <div id="submenu-men" class="submenu">
+      <a href="#">All Men's</a><a href="#">New Arrivals</a><a href="#">T-Shirts & Henleys</a><a href="#">Hoodies & Sweatshirts</a><a href="#">Graphic Tees</a><a href="#">Sweaters</a><a href="#">Polos</a><a href="#">Shirts</a>
+    </div>
+    <div class="menu-item" onclick="toggleSubmenu('jeans')"><span class="menu-title">Jeans</span><i id="arrow-jeans" class="fas fa-chevron-down arrow-icon"></i></div>
+    <div id="submenu-jeans" class="submenu"><a href="#">Skinny</a><a href="#">Straight</a><a href="#">Relaxed</a></div>
+    <div class="menu-item" onclick="toggleSubmenu('activewear')"><span class="menu-title">Activewear</span><i id="arrow-activewear" class="fas fa-chevron-down arrow-icon"></i></div>
+    <div id="submenu-activewear" class="submenu"><a href="#">Joggers</a><a href="#">Gym Tops</a><a href="#">Sets</a></div>
+    <div class="menu-item" onclick="toggleSubmenu('sale')"><span class="menu-title">Sale</span><i id="arrow-sale" class="fas fa-chevron-down arrow-icon"></i></div>
+    <div id="submenu-sale" class="submenu"><a href="#">Offers</a><a href="#">Outlet</a></div>
+    <div class="menu-item" onclick="toggleSubmenu('purpose')"><span class="menu-title">Purpose</span><i id="arrow-purpose" class="fas fa-chevron-down arrow-icon"></i></div>
+    <div id="submenu-purpose" class="submenu"><a href="#">Sustainability</a><a href="#">Our Story</a></div>
+    <a href="#">Help</a><a href="#">Privacy & Terms</a><a href="#">About Us</a><a href="#">Contact Us</a>
+  </div>
+
+  <!-- Tagline -->
+  <div class="tagline">ملابس رجالية أنيقة ومريحة</div>
+<!-- ====== Category Circles Row (Top) ====== -->
+<section class="cat-row" aria-label="Top categories">
+  <a class="cat" href="#">
+    <span class="thumb"><img src="https://picsum.photos/200?random=11" alt="Skater Baggy 360"></span>
+    <span class="label">Skater Baggy 360</span>
+  </a>
+  <a class="cat" href="#">
+    <span class="thumb"><img src="https://picsum.photos/200?random=12" alt="Tops"></span>
+    <span class="label">Tops</span>
+  </a>
+  <a class="cat" href="#">
+    <span class="thumb"><img src="https://picsum.photos/200?random=13" alt="Bottoms"></span>
+    <span class="label">Bottoms</span>
+  </a>
+  <a class="cat" href="#">
+    <span class="thumb"><img src="https://picsum.photos/200?random=14" alt="Jackets & Coats"></span>
+    <span class="label">Jackets & Coats</span>
+  </a>
+  <a class="cat" href="#">
+    <span class="thumb"><img src="https://picsum.photos/200?random=15" alt="Sweatshirts & Sweatpants"></span>
+    <span class="label">Sweatshirts & Sweatpants</span>
+  </a>
+  <a class="cat" href="#">
+    <span class="thumb"><img src="https://picsum.photos/200?random=16" alt="Graphics Shop"></span>
+    <span class="label">Graphics Shop</span>
+  </a>
+</section>
+
+  <!-- ====== New Shop Section (Hollister-like) ====== -->
+  <section class="shop">
+    <!-- Left Filters -->
+    <aside class="filters">
+  <h3>Filter</h3>
+
+  <!-- Category -->
+  <div class="facet">
+  <button class="facet-btn" onclick="toggleFacet(this)">Category <i class="fa fa-plus"></i></button>
+  <div class="facet-content">
+      <strong>Tops</strong>
+      <label><input type="checkbox"> Graphic Tees</label>
+      <label><input type="checkbox"> Tees & Tanks</label>
+      <label><input type="checkbox"> Polos</label>
+      <label><input type="checkbox"> Shirts</label>
+      <label><input type="checkbox"> Hoodies & Sweatshirts</label>
+      <label><input type="checkbox"> Sweaters</label>
+
+      <strong>Bottoms</strong>
+      <label><input type="checkbox"> Jeans</label>
+      <label><input type="checkbox"> Pants</label>
+      <label><input type="checkbox"> Sweatpants</label>
+      <label><input type="checkbox"> Shorts</label>
+
+      <strong>Other</strong>
+      <label><input type="checkbox"> Activewear</label>
+      <label><input type="checkbox"> Sleepwear</label>
+      <label><input type="checkbox"> Jackets & Coats</label>
+      <label><input type="checkbox"> Swimwear</label>
+      <label><input type="checkbox"> Underwear</label>
+      <label><input type="checkbox"> Accessories</label>
+      <label><input type="checkbox"> Fragrance</label>
+    </div>
+  </div>
+
+  <!-- Color -->
+  <div class="facet">
+    <button class="facet-btn" onclick="toggleFacet(this)">Color <i class="fa fa-plus"></i></button>
+    <div class="facet-content">
+      <label><input type="checkbox"> Blue</label>
+      <label><input type="checkbox"> Black</label>
+      <label><input type="checkbox"> White</label>
+      <label><input type="checkbox"> Grey</label>
+      <label><input type="checkbox"> Green</label>
+      <label><input type="checkbox"> Red</label>
+      <label><input type="checkbox"> Pink</label>
+      <label><input type="checkbox"> Purple</label>
+      <label><input type="checkbox"> Orange</label>
+      <label><input type="checkbox"> Multi</label>
+      <label><input type="checkbox"> Yellow</label>
+    </div>
+  </div>
+
+  <!-- Size -->
+  <div class="facet">
+    <button class="facet-btn" onclick="toggleFacet(this)">Size <i class="fa fa-plus"></i></button>
+    <div class="facet-content">
+      <label><input type="checkbox"> XS</label>
+      <label><input type="checkbox"> S</label>
+      <label><input type="checkbox"> M</label>
+      <label><input type="checkbox"> L</label>
+      <label><input type="checkbox"> XL</label>
+      <label><input type="checkbox"> XXL</label>
+      <label><input type="checkbox"> XXXL</label>
+      <label><input type="checkbox"> 26</label>
+      <label><input type="checkbox"> 28</label>
+      <label><input type="checkbox"> 29</label>
+      <label><input type="checkbox"> 30</label>
+      <label><input type="checkbox"> 31</label>
+      <label><input type="checkbox"> 32</label>
+      <label><input type="checkbox"> 33</label>
+      <label><input type="checkbox"> 34</label>
+      <label><input type="checkbox"> 36</label>
+      <label><input type="checkbox"> 38</label>
+      <label><input type="checkbox"> 40</label>
+      <label><input type="checkbox"> 1.7 OZ</label>
+      <label><input type="checkbox"> ONE SIZE</label>
+    </div>
+  </div>
+
+  <!-- Length -->
+  <div class="facet">
+    <button class="facet-btn" onclick="toggleFacet(this)">Length <i class="fa fa-plus"></i></button>
+    <div class="facet-content">
+      <label><input type="checkbox"> 28</label>
+      <label><input type="checkbox"> Regular</label>
+      <label><input type="checkbox"> Tall</label>
+      <label><input type="checkbox"> 30</label>
+      <label><input type="checkbox"> 32</label>
+      <label><input type="checkbox"> 34</label>
+      <label><input type="checkbox"> 36</label>
+    </div>
+  </div>
+
+  <!-- Style -->
+  <div class="facet">
+    <button class="facet-btn" onclick="toggleFacet(this)">Style <i class="fa fa-plus"></i></button>
+    <div class="facet-content">
+      <label><input type="checkbox"> Baggy</label>
+      <label><input type="checkbox"> Jogger</label>
+      <label><input type="checkbox"> Super Baggy</label>
+      <label><input type="checkbox"> Active Short</label>
+      <label><input type="checkbox"> Hoodie</label>
+      <label><input type="checkbox"> Loose</label>
+      <label><input type="checkbox"> Fleece Short</label>
+      <label><input type="checkbox"> Straight Leg</label>
+      <label><input type="checkbox"> Slim Straight</label>
+      <label><input type="checkbox"> Boot</label>
+      <label><input type="checkbox"> Jogger Short</label>
+      <label><input type="checkbox"> Skater Baggy</label>
+      <label><input type="checkbox"> Straight</label>
+      <label><input type="checkbox"> Windbreaker</label>
+      <label><input type="checkbox"> Button-Up Shirt</label>
+      <label><input type="checkbox"> Athletic Skinny</label>
+      <label><input type="checkbox"> Linen</label>
+      <label><input type="checkbox"> Skinny</label>
+      <label><input type="checkbox"> Puffer</label>
+      <label><input type="checkbox"> Jacket</label>
+      <label><input type="checkbox"> Pullover</label>
+      <label><input type="checkbox"> Crewneck</label>
+      <label><input type="checkbox"> Crewneck T-Shirt</label>
+      <label><input type="checkbox"> Relaxed Denim Short</label>
+      <label><input type="checkbox"> Boxer Brief</label>
+      <label><input type="checkbox"> Super Skinny</label>
+      <label><input type="checkbox"> Big Jeans</label>
+      <label><input type="checkbox"> Flat-Front Short</label>
+      <label><input type="checkbox"> Taper</label>
+      <label><input type="checkbox"> Guard Swim Trunk</label>
+      <label><input type="checkbox"> Zip-Up</label>
+      <label><input type="checkbox"> Ankle Socks</label>
+      <label><input type="checkbox"> Bomber</label>
+      <label><input type="checkbox"> Denim Jacket</label>
+      <label><input type="checkbox"> Henley</label>
+      <label><input type="checkbox"> Vest</label>
+      <label><input type="checkbox"> Beanie</label>
+      <label><input type="checkbox"> Belt</label>
+      <label><input type="checkbox"> Boxer Short</label>
+      <label><input type="checkbox"> Cardigan</label>
+      <label><input type="checkbox"> Half Pant</label>
+      <label><input type="checkbox"> Sport Boxer Brief</label>
+    </div>
+  </div>
+
+  <!-- Material -->
+  <div class="facet">
+    <button class="facet-btn" onclick="toggleFacet(this)">Material <i class="fa fa-plus"></i></button>
+    <div class="facet-content">
+      <label><input type="checkbox"> Fleece</label>
+      <label><input type="checkbox"> Pique</label>
+      <label><input type="checkbox"> Cotton Blend</label>
+      <label><input type="checkbox"> Linen Blend</label>
+      <label><input type="checkbox"> Poplin</label>
+      <label><input type="checkbox"> Leather</label>
+      <label><input type="checkbox"> Flannel</label>
+      <label><input type="checkbox"> Oxford</label>
+      <label><input type="checkbox"> Ribbed</label>
+      <label><input type="checkbox"> Wool</label>
+    </div>
+  </div>
+
+  <!-- Length Style -->
+  <div class="facet">
+    <button class="facet-btn" onclick="toggleFacet(this)">Length Style <i class="fa fa-plus"></i></button>
+    <div class="facet-content">
+      <label><input type="checkbox"> Full-Length</label>
+      <label><input type="checkbox"> Mid-Thigh</label>
+      <label><input type="checkbox"> Longer-Length</label>
+      <label><input type="checkbox"> Classic-Length</label>
+      <label><input type="checkbox"> Above the Knee</label>
+      <label><input type="checkbox"> At the Knee</label>
+      <label><input type="checkbox"> Below the Knee</label>
+    </div>
+  </div>
+
+  <!-- Details -->
+  <div class="facet">
+    <button class="facet-btn" onclick="toggleFacet(this)">Details <i class="fa fa-plus"></i></button>
+    <div class="facet-content">
+      <label><input type="checkbox"> Pull-On Waistband</label>
+      <label><input type="checkbox"> Pockets</label>
+      <label><input type="checkbox"> Zipper Pocket</label>
+      <label><input type="checkbox"> Phone Pocket</label>
+      <label><input type="checkbox"> Earth-Friendly</label>
+      <label><input type="checkbox"> Stretch</label>
+    </div>
+  </div>
+
+</aside>
+
+
+    <!-- Main content -->
+    <main>
+      <div class="sort-row">
+        <span>Sort By</span>
+        <select>
+          <option>Featured</option>
+          <option>Price: Low to High</option>
+          <option>Price: High to Low</option>
+          <option>Newest</option>
+        </select>
+      </div>
+
+      <div class="grid">
+        <!-- Promo Banner -->
+        <a class="promo" href="#">
+          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop" alt="Promo">
+          <div class="promo-text">30% Off<br/>Select Styles</div>
+        </a>
+
+        <!-- Product 1 -->
+        <div class="product">
+          <button class="wish"><i class="fa-regular fa-heart"></i></button>
+          <img src="https://picsum.photos/600/700?random=1" alt="Product 1">
+          <div class="swatches">
+            <span class="swatch" style="background:#000"></span>
+            <span class="swatch" style="background:#888"></span>
+            <span class="swatch" style="background:#b3c7ff"></span>
+            <span class="swatch more">+4</span>
+          </div>
+          <h2>تيشيرت أبيض</h2>
+          <div class="price">KD 7.000</div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="product">
+          <button class="wish"><i class="fa-regular fa-heart"></i></button>
+          <img src="https://picsum.photos/600/700?random=2" alt="Product 2">
+          <div class="swatches">
+            <span class="swatch" style="background:#d1d1d1"></span>
+            <span class="swatch" style="background:#9e9e9e"></span>
+            <span class="swatch more">+7</span>
+          </div>
+          <h2>شورت صيفي</h2>
+          <div class="price">KD 5.500</div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="product">
+          <button class="wish"><i class="fa-regular fa-heart"></i></button>
+          <img src="https://picsum.photos/600/700?random=3" alt="Product 3">
+          <div class="swatches">
+            <span class="swatch" style="background:#2b2b2b"></span>
+            <span class="swatch" style="background:#5b5b5b"></span>
+            <span class="swatch more">+4</span>
+          </div>
+          <h2>بنطلون رياضي</h2>
+          <div class="price">KD 8.000</div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- Footer (كما هو في نسختك) -->
+  <footer style="background-color:#f8f6f3;font-family:'Barlow',sans-serif;color:#333;font-size:14px;">
+    <div style="max-width:1200px;margin:auto;padding:60px 20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:40px;">
+      <div style="flex:1;min-width:180px;">
+        <h4 style="color:#2c2c2c;font-weight:700;">About Us</h4>
+        <p style="color:#666;">Brand Protection</p><p style="color:#666;">Careers</p><p style="color:#666;">Accessibility</p>
+        <p style="color:#666;">Inclusion & Diversity</p><p style="color:#666;">Press Room</p><p style="color:#666;">Sustainability</p>
+      </div>
+      <div style="flex:1;min-width:180px;">
+        <h4 style="color:#2c2c2c;font-weight:700;">Help</h4>
+        <p style="color:#666;">Customer Help</p><p style="color:#666;">Order Help</p><p style="color:#666;">Shipping & Handling</p>
+        <p style="color:#666;">Online Returns</p><p style="color:#666;">Track My Order</p><p style="color:#666;">Cards & E-Cards</p>
+      </div>
+      <div style="flex:1;min-width:180px;">
+        <h4 style="color:transparent;margin-bottom:15px;">‎</h4>
+        <p style="color:#000;">🇰🇼 <a href="#" style="color:#000;text-decoration:underline;">Kuwait</a></p>
+      </div>
+      <div style="flex:1;min-width:250px;">
+        <h4 style="color:#2c2c2c;font-weight:700;">Subscribe</h4>
+        <input type="email" placeholder="Email Address" style="width:100%;padding:12px 0;border:none;border-bottom:2px solid #333;background:transparent;margin-bottom:15px;color:#000;">
+        <button style="width:100%;background:#2c2c2c;color:#fff;padding:12px 0;border:none;border-radius:50px;font-weight:700;">Join</button>
+        <div style="margin-top:30px;display:flex;justify-content:space-between;align-items:center;max-width:240px;">
+          <i class="fab fa-tiktok" style="color:#777;font-size:20px;"></i>
+          <i class="fab fa-instagram" style="color:#777;font-size:20px;"></i>
+          <i class="fab fa-facebook-f" style="color:#777;font-size:20px;"></i>
+          <i class="fab fa-pinterest-p" style="color:#777;font-size:20px;"></i>
+          <i class="fab fa-youtube" style="color:#777;font-size:20px;"></i>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;padding:20px 0;background:#eee;font-size:13px;">
+      2025 © NAVY. All rights reserved. &nbsp; | &nbsp; <a href="#" style="color:#333;">trynavy.com</a>
+    </div>
+  </footer>
+
+  <script>
+    function openSidebar(){document.getElementById("sidebar").style.width="70%";document.getElementById("sidebarOverlay").style.display="block";}
+    function closeSidebar(){document.getElementById("sidebar").style.width="0";document.getElementById("sidebarOverlay").style.display="none";}
+    function updateCartCount(){let cart=JSON.parse(localStorage.getItem('cart'))||[];let total=cart.reduce((s,i)=>s+(i.qty||1),0);document.getElementById('cart-count').textContent=total;} updateCartCount();
+    function toggleSubmenu(id){const s=document.getElementById(`submenu-${id}`);const a=document.getElementById(`arrow-${id}`);if(s.style.display==="block"){s.style.display="none";a.classList.remove("rotate");}else{s.style.display="block";a.classList.add("rotate");}}
+    function openProfileMenu(){document.getElementById("profileMenu").style.right="0";document.getElementById("profileOverlay").style.display="block";}
+    function closeProfileMenu(){document.getElementById("profileMenu").style.right="-100%";document.getElementById("profileOverlay").style.display="none";}
+
+    // Facets accordion (left filters)
+    function toggleFacet(btn) {
+  const box = btn.parentElement.querySelector('.facet-content');
+  const icon = btn.querySelector('i');
+  const open = box.style.display === 'block';
+
+  box.style.display = open ? 'none' : 'block';
+  icon.className = open ? 'fa fa-plus' : 'fa fa-minus';
+}
+
+  </script>
+  <script>
+(function(){
+  const row = document.querySelector('.cat-row');
+  if(!row) return;
+
+  let isDown=false, startX=0, scrollLeft=0;
+
+  row.addEventListener('mousedown', e=>{
+    isDown=true; row.classList.add('dragging');
+    startX = e.pageX - row.offsetLeft;
+    scrollLeft = row.scrollLeft;
+  });
+  ['mouseleave','mouseup'].forEach(ev=>{
+    row.addEventListener(ev, ()=>{ isDown=false; row.classList.remove('dragging'); });
+  });
+  row.addEventListener('mousemove', e=>{
+    if(!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - row.offsetLeft;
+    const walk = (x - startX);
+    row.scrollLeft = scrollLeft - walk;
+  });
+})();
+</script>
+</body>
+</html>
