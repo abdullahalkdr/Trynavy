@@ -277,7 +277,7 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
   </style>
 </head>
 <body>
-
+<div id="navy-points-badge" style="max-width:420px;margin:16px auto;"></div>
   <!-- Header -->
   <div class="navbar">
     <div class="nav-left">
@@ -711,6 +711,36 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
     setTimeout(()=>{ window.location.href = 'contact-us.html'; }, 280); // نفس زمن الأنيميشن
   });
 })();
+
+    <script src="loyalty.js"></script>
+<script>
+// نفترض إنك تحفظ بيانات المستخدم بعد اللوق إن داخل localStorage
+// عدّل المفاتيح حسب مشروعك
+const userEmail = localStorage.getItem('userEmail') || 'guest@example.com';
+const userPhone = localStorage.getItem('userPhone') || '00000000';
+
+// جيب/أنشئ العميل
+const customer = Loyalty.getOrCreateCustomer({ email: userEmail, phone: userPhone });
+
+// (اختياري) مثال إضافة نقاط من آخر عملية (لو تبغى تعرض تقدّم)
+//// Loyalty.accruePoints(customer, 12.750, [{size:'L', qty:1}]);
+
+// أرندر البادج
+(function renderBadge() {
+  const t = Loyalty.getTier(customer.points);
+  const el = document.getElementById('navy-points-badge');
+  if (!el) return;
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #e7e3dc;border-radius:10px;background:#fff;">
+      <div style="width:36px;height:36px;border-radius:50%;background:${t.color};"></div>
+      <div style="line-height:1.25">
+        <div style="font-weight:600;">Navy Points • ${t.name}</div>
+        <div style="font-size:12px;color:#6b6b6b;">${customer.points} pts • ${t.discountPct}% off on preferred sizes</div>
+      </div>
+    </div>
+  `;
+})();
+  
 </script>
 
   // اختياري: سكّر البانل قبل التحويل
