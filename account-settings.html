@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NAVY • Account Settings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#0a2a47;
+      --ink:#0f172a;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --bg:#f6f7f9;
+      --card:#ffffff;
+      --border:#e5e7eb;
+      --accent:#0a2a47;
+      --accent-ghost:#e9eef5;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:'Barlow',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
+
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:#fff;border-bottom:1px solid var(--border)}
+    .nav-left,.nav-right{display:flex;align-items:center;gap:14px}
+    .brand{font-weight:700;letter-spacing:2px;font-size:22px;color:var(--navy);text-align:center}
+    .brand a{color:inherit;text-decoration:none}
+    .icon-btn{background:transparent;border:0;cursor:pointer;font-size:20px;color:var(--ink);padding:6px;border-radius:999px}
+    .icon-btn:active{transform:scale(.98)}
+
+    .page{max-width:1100px;margin:26px auto;padding:0 16px}
+    .crumbs{font-size:14px;color:var(--muted);margin-bottom:10px}
+    .page h1{margin:0 0 16px;color:var(--ink);font-size:28px}
+    .subtitle{color:var(--muted);margin-bottom:24px}
+
+    .layout{display:grid;grid-template-columns:260px 1fr;gap:22px}
+    .aside{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px}
+    .aside h3{margin:10px 10px 6px;font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase}
+    .aside a{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:600}
+    .aside a .fa{width:18px;text-align:center}
+    .aside a.active, .aside a:hover{background:var(--accent-ghost);color:var(--navy)}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px}
+    .card + .card{margin-top:16px}
+    .card .card-hd{padding:18px 18px 0}
+    .card .card-bd{padding:18px}
+
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+    .col-6{grid-column:span 6}
+    .col-12{grid-column:span 12}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input,select,textarea{width:100%;padding:12px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:15px}
+    input:focus,select:focus,textarea:focus{outline:2px solid #c9d7e6;border-color:#c9d7e6}
+
+    .row{display:flex;gap:10px}
+    .savebar{position:sticky;bottom:0;display:flex;justify-content:flex-end;gap:10px;padding:12px;background:rgba(255,255,255,.8);backdrop-filter:blur(8px);border-top:1px solid var(--border);border-radius:0 0 14px 14px}
+    .btn{appearance:none;border:0;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-ghost{background:#fff;border:1px solid var(--border);color:var(--ink)}
+    .note{font-size:13px;color:var(--muted)}
+    .helper{font-size:12px;color:var(--muted);margin-top:6px}
+
+    @media (max-width:980px){
+      .layout{grid-template-columns:1fr}
+      .aside{order:2}
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="icon-btn" id="menuBtn" aria-label="Menu"><i class="fa fa-bars"></i></button>
+    </div>
+    <div class="brand"><a href="/">NAVY</a></div>
+    <div class="nav-right">
+      <!-- اضغط يفتح سايدبار الحساب -->
+      <a class="icon-btn" href="javascript:void(0)" onclick="openProfileMenu()" aria-label="Account">
+        <i class="fa-regular fa-user"></i>
+      </a>
+      <a class="icon-btn" href="cart.html" aria-label="Cart"><i class="fa fa-bag-shopping"></i></a>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="crumbs">Account ▸ Settings</div>
+    <h1>Account Settings</h1>
+    <p class="subtitle">Update info, payment, addresses, and email preferences.</p>
+
+    <div class="layout">
+      <aside class="aside" id="asideLinks">
+        <h3>Manage</h3>
+        <a href="#profile" class="active"><i class="fa fa-id-card"></i> Profile</a>
+        <a href="#security"><i class="fa fa-lock"></i> Password & Security</a>
+        <a href="#address"><i class="fa fa-location-dot"></i> Address</a>
+        <a href="#payment"><i class="fa fa-credit-card"></i> Payment</a>
+        <a href="#emails"><i class="fa fa-envelope"></i> Email Preferences</a>
+        <a href="#danger" style="color:#b91c1c"><i class="fa fa-triangle-exclamation"></i> Danger Zone</a>
+      </aside>
+
+      <section id="content">
+        <!-- PROFILE -->
+        <form id="formProfile" class="card" autocomplete="on">
+          <div class="card-hd">
+            <h2 id="profile">Profile</h2>
+            <p class="note">Your name and phone number used across orders and support.</p>
+          </div>
+          <div class="card-bd">
+            <div class="grid">
+              <div class="col-6">
+                <label for="firstName">First Name</label>
+                <input id="firstName" name="firstName" placeholder="Abdullah" />
+              </div>
+              <div class="col-6">
+                <label for="lastName">Last Name</label>
+                <input id="lastName" name="lastName" placeholder="Alkhudair" />
+              </div>
+              <div class="col-6">
+                <label for="phoneCode">Country Code</label>
+                <select id="phoneCode" name="phoneCode">
+                  <option value="+965">🇰🇼 +965 (Kuwait)</option>
+                  <option value="+966">🇸🇦 +966 (KSA)</option>
+                  <option value="+971">🇦🇪 +971 (UAE)</option>
+                  <option value="+973">🇧🇭 +973 (Bahrain)</option>
+                  <option value="+974">🇶🇦 +974 (Qatar)</option>
+                  <option value="+968">🇴🇲 +968 (Oman)</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="phone">Phone</label>
+                <input id="phone" name="phone" placeholder="55 410 070" />
+              </div>
+            </div>
+          </div>
+          <div class="savebar">
+            <button type="button" class="btn btn-ghost" data-reset="formProfile">Reset</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+
+        <!-- SECURITY -->
+        <form id="formSecurity" class="card">
+          <div class="card-hd">
+            <h2 id="security">Password & Security</h2>
+            <p class="note">Change your password. We never store it in plain text.</p>
+          </div>
+          <div class="card-bd">
+            <div class="grid">
+              <div class="col-6">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="you@trynavy.com" />
+              </div>
+              <div class="col-6"></div>
+              <div class="col-6">
+                <label for="currentPass">Current Password</label>
+                <input id="currentPass" name="currentPass" type="password" />
+              </div>
+              <div class="col-6">
+                <label for="newPass">New Password</label>
+                <input id="newPass" name="newPass" type="password" />
+              </div>
+            </div>
+          </div>
+          <div class="savebar">
+            <button type="button" class="btn btn-ghost" data-reset="formSecurity">Reset</button>
+            <button type="submit" class="btn btn-primary">Update Password</button>
+          </div>
+        </form>
+
+        <!-- ADDRESS -->
+        <form id="formAddress" class="card">
+          <div class="card-hd">
+            <h2 id="address">Address</h2>
+            <p class="note">Used for delivery and invoices. Kuwait format supported.</p>
+          </div>
+          <div class="card-bd">
+            <div class="grid">
+              <div class="col-6">
+                <label for="zone">Zone</label>
+                <input id="zone" name="zone" placeholder="e.g., Farwaniyah" />
+              </div>
+              <div class="col-6">
+                <label for="block">Block Number</label>
+                <input id="block" name="block" placeholder="e.g., 6" />
+              </div>
+              <div class="col-6">
+                <label for="street">Street Name/Number</label>
+                <input id="street" name="street" placeholder="e.g., 105" />
+              </div>
+              <div class="col-6">
+                <label for="house">House / Flat Number</label>
+                <input id="house" name="house" placeholder="e.g., 12" />
+              </div>
+              <div class="col-12">
+                <label for="notes">Delivery Notes</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="Entrance, landmark, etc."></textarea>
+                <div class="helper">We never share your address outside your orders.</div>
+              </div>
+            </div>
+          </div>
+          <div class="savebar">
+            <button type="button" class="btn btn-ghost" data-reset="formAddress">Reset</button>
+            <button type="submit" class="btn btn-primary">Save Address</button>
+          </div>
+        </form>
+
+        <!-- PAYMENT -->
+        <form id="formPayment" class="card">
+          <div class="card-hd">
+            <h2 id="payment">Payment</h2>
+            <p class="note">We use secure gateways. You can add a card at checkout.</p>
+          </div>
+          <div class="card-bd">
+            <div class="grid">
+              <div class="col-12">
+                <label for="cashpref">Preferred Method</label>
+                <select id="cashpref" name="cashpref">
+                  <option value="knet">KNET</option>
+                  <option value="visa">Visa / MasterCard</option>
+                  <option value="cod">Cash on Delivery</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="savebar">
+            <button type="button" class="btn btn-ghost" data-reset="formPayment">Reset</button>
+            <button type="submit" class="btn btn-primary">Save Payment</button>
+          </div>
+        </form>
+
+        <!-- EMAILS -->
+        <form id="formEmails" class="card">
+          <div class="card-hd">
+            <h2 id="emails">Email Preferences</h2>
+            <p class="note">Choose what you’d like to hear from us.</p>
+          </div>
+          <div class="card-bd">
+            <label><input type="checkbox" id="promo" /> Receive promos & new drops</label><br/>
+            <label><input type="checkbox" id="orders" checked disabled /> Order updates (required)</label>
+          </div>
+          <div class="savebar">
+            <button type="button" class="btn btn-ghost" data-reset="formEmails">Reset</button>
+            <button type="submit" class="btn btn-primary">Save Preferences</button>
+          </div>
+        </form>
+
+        <!-- DANGER ZONE -->
+        <div id="danger" class="card">
+          <div class="card-hd">
+            <h2>Danger Zone</h2>
+            <p class="note">Delete your account and all associated data.</p>
+          </div>
+          <div class="card-bd">
+            <button class="btn btn-ghost" id="exportBtn"><i class="fa fa-file-export"></i> Export My Data</button>
+            <button class="btn btn-primary" id="deleteBtn" style="background:#b91c1c">Delete Account</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Profile Sidebar (Your Account) -->
+  <div id="profileMenu" style="position:fixed;top:0;right:-100%;width:70%;height:100vh;background:#fff;box-shadow:-2px 0 5px rgba(0,0,0,.2);transition:right .3s;z-index:1001;padding:25px 20px;border-top-left-radius:25px;border-bottom-left-radius:25px;font-size:12px;">
+    <button onclick="closeProfileMenu()" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
+    <h2 style="font-weight:700;color:#001f3f;font-size:20px;margin-bottom:5px;">Your Account</h2>
+    <p style="color:#555;margin-bottom:20px;">Sign in for rewards, easy order tracking and more.</p>
+    <div style="display:flex;gap:8px;margin-bottom:24px;">
+      <a href="login.html" style="flex:1;text-align:center;background:#001f3f;color:#fff;padding:10px 0;border-radius:30px;text-decoration:none;font-weight:600;font-size:13px;">Sign In</a>
+      <a href="signup.html" style="flex:1;text-align:center;color:#001f3f;padding:10px 0;border-radius:30px;border:2px solid #001f3f;text-decoration:none;font-weight:600;font-size:13px;">Join</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <div><div style="font-weight:700;color:#001f3f;">Purchase History</div><div style="color:#666;">Track an order, start a return or exchange</div></div>
+      <div><div style="font-weight:700;color:#001f3f;">My List</div><div style="color:#666;">Your saved items</div></div>
+      <a href="account-settings.html" style="text-decoration:none;">
+        <div style="font-weight:700;color:#001f3f;">Account Settings</div>
+        <div style="color:#666;">Update info, payment, addresses, email preferences</div>
+      </a>
+    </div>
+  </div>
+  <div id="profileOverlay" onclick="closeProfileMenu()" style="position:fixed;top:0;right:0;width:100vw;height:100vh;z-index:998;background:rgba(0,0,0,.3);display:none;"></div>
+
+  <script>
+    // helpers
+    function getUser(){
+      try{
+        const raw=localStorage.getItem('navyUser');
+        if(!raw){return {profile:{},address:{},prefs:{}}}
+        return JSON.parse(raw);
+      }catch(e){return {profile:{},address:{},prefs:{}}}
+    }
+    function setUser(u){localStorage.setItem('navyUser',JSON.stringify(u))}
+    const user = getUser();
+
+    const $ = (s)=>document.querySelector(s);
+    function fill(){
+      $('#firstName').value = user.profile?.firstName || '';
+      $('#lastName').value  = user.profile?.lastName || '';
+      $('#phoneCode').value = user.profile?.phoneCode || '+965';
+      $('#phone').value     = user.profile?.phone || '';
+      $('#email').value     = user.profile?.email || '';
+      $('#zone').value   = user.address?.zone || '';
+      $('#block').value  = user.address?.block || '';
+      $('#street').value = user.address?.street || '';
+      $('#house').value  = user.address?.house || '';
+      $('#notes').value  = user.address?.notes || '';
+      $('#cashpref').value = user.payment?.preferred || 'knet';
+      $('#promo').checked  = (user.prefs?.promo ?? true);
+    }
+    fill();
+
+    function toast(msg){
+      const t=document.createElement('div');
+      t.textContent=msg;
+      t.style.cssText='position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#0a2a47;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:9999;font-weight:700';
+      document.body.appendChild(t);setTimeout(()=>t.remove(),1800);
+    }
+
+    document.getElementById('formProfile').addEventListener('submit',e=>{
+      e.preventDefault();
+      user.profile={
+        firstName:$('#firstName').value.trim(),
+        lastName:$('#lastName').value.trim(),
+        phoneCode:$('#phoneCode').value,
+        phone:$('#phone').value.trim(),
+        email:user.profile?.email||$('#email').value.trim()
+      };
+      setUser(user);toast('Profile saved');
+    });
+
+    document.getElementById('formSecurity').addEventListener('submit',e=>{
+      e.preventDefault();
+      user.profile=user.profile||{};
+      user.profile.email=$('#email').value.trim();
+      setUser(user);toast('Security updated');
+      e.target.reset();
+    });
+
+    document.getElementById('formAddress').addEventListener('submit',e=>{
+      e.preventDefault();
+      user.address={
+        zone:$('#zone').value.trim(),
+        block:$('#block').value.trim(),
+        street:$('#street').value.trim(),
+        house:$('#house').value.trim(),
+        notes:$('#notes').value.trim()
+      };
+      setUser(user);toast('Address saved');
+    });
+
+    document.getElementById('formPayment').addEventListener('submit',e=>{
+      e.preventDefault();
+      user.payment={preferred:$('#cashpref').value};
+      setUser(user);toast('Payment preference saved');
+    });
+
+    document.getElementById('formEmails').addEventListener('submit',e=>{
+      e.preventDefault();
+      user.prefs={promo:$('#promo').checked};
+      setUser(user);toast('Email preferences saved');
+    });
+
+    document.querySelectorAll('[data-reset]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const formId=btn.getAttribute('data-reset');
+        document.getElementById(formId).reset();
+      })
+    });
+
+    const sections=[...document.querySelectorAll('#content h2')];
+    const links=[...document.querySelectorAll('.aside a')];
+    const obs=new IntersectionObserver(entries=>{
+      entries.forEach(ent=>{
+        if(ent.isIntersecting){
+          links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+ent.target.id));
+        }
+      })
+    },{rootMargin:'-40% 0px -55% 0px',threshold:0});
+    sections.forEach(s=>obs.observe(s));
+
+    document.getElementById('exportBtn').addEventListener('click',e=>{e.preventDefault();toast('We will email you a copy of your data.');});
+    document.getElementById('deleteBtn').addEventListener('click',e=>{e.preventDefault();if(confirm('Delete your account? This cannot be undone.')){localStorage.removeItem('navyUser');toast('Account deleted (local)');setTimeout(()=>location.href='/',1200)}});
+
+    document.getElementById('menuBtn').addEventListener('click', openSidebar);
+
+    // ---- Profile sidebar open/close (fix: no nested <script>) ----
+    function openProfileMenu() {
+      document.getElementById('profileMenu').style.right = '0';
+      document.getElementById('profileOverlay').style.display = 'block';
+    }
+    function closeProfileMenu() {
+      document.getElementById('profileMenu').style.right = '-100%';
+      document.getElementById('profileOverlay').style.display = 'none';
+    }
+    
+    function openSidebar(){
+      document.getElementById('sidebar').style.left = '0';
+      document.getElementById('sidebarOverlay').style.display = 'block';
+    }
+    function closeSidebar(){
+      document.getElementById('sidebar').style.left = '-100%';
+      document.getElementById('sidebarOverlay').style.display = 'none';
+}
+
+  </script>
+  <!-- Left App Sidebar -->
+<div id="sidebar" style="position:fixed;top:0;left:-100%;width:75%;max-width:340px;height:100vh;background:#fff;box-shadow:2px 0 8px rgba(0,0,0,.2);transition:left .3s;z-index:1002;padding:24px 18px;border-top-right-radius:24px;border-bottom-right-radius:24px;">
+  <button onclick="closeSidebar()" style="position:absolute;top:18px;right:18px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
+  <h2 style="font-weight:700;color:#001f3f;font-size:20px;margin:0 0 16px;">Menu</h2>
+
+  <nav style="display:flex;flex-direction:column;gap:14px;font-size:14px;">
+    <a href="/" style="text-decoration:none;color:#0b1e34;">Home</a>
+    <a href="/shop.html" style="text-decoration:none;color:#0b1e34;">Shop</a>
+    <a href="/about.html" style="text-decoration:none;color:#0b1e34;">About</a>
+    <a href="/contact.html" style="text-decoration:none;color:#0b1e34;">Contact</a>
+  </nav>
+</div>
+
+<!-- Overlay للسايدبار -->
+<div id="sidebarOverlay" onclick="closeSidebar()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1001;background:rgba(0,0,0,.3);display:none;"></div>
+
+</body>
+</html>

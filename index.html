@@ -252,6 +252,28 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
 
 /* لو حسّيت إن القاعدة القديمة تغلبها، فعّل !important */
 
+/* الفلتر يسوي سكرول بروحه */
+.filters{
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+/* يجعل الفلتر ثابت أعلى الصفحة أثناء السكول */
+@media (min-width: 992px){
+  .filter-scroll{
+    position: sticky;
+    top: 90px; /* عدّلها إذا ارتفاع الهيدر مختلف */
+  }
+}
+
+/* شريط تمرير أنيق */
+.filter-scroll::-webkit-scrollbar{ width: 6px; }
+.filter-scroll::-webkit-scrollbar-thumb{ background: rgba(0,0,0,.2); border-radius: 3px; }
+
+/* بالموبايل خلِّه طبيعي بدون سكرول داخلي */
+@media (max-width: 991px){
+  .filter-scroll{ max-height: none; overflow: visible; position: static; }
+}
   </style>
 </head>
 <body>
@@ -275,22 +297,30 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
   </div>
 
   <!-- Profile Sidebar -->
-  <div id="profileMenu" style="position:fixed;top:0;right:-100%;width:70%;height:100vh;background:#fff;box-shadow:-2px 0 5px rgba(0,0,0,.2);transition:right .3s;z-index:1001;padding:25px 20px;border-top-left-radius:25px;border-bottom-left-radius:25px;font-size:12px;">
-    <button onclick="closeProfileMenu()" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
-    <h2 style="font-weight:700;color:#001f3f;font-size:20px;margin-bottom:5px;">Your Account</h2>
-    <p style="color:#555;margin-bottom:20px;">Sign in for rewards, easy order tracking and more.</p>
-    <div style="display:flex;gap:8px;margin-bottom:24px;">
-      <a href="login.html" style="flex:1;text-align:center;background:#001f3f;color:#fff;padding:10px 0;border-radius:30px;text-decoration:none;font-weight:600;font-size:13px;">Sign In</a>
-      <a href="signup.html" style="flex:1;text-align:center;color:#001f3f;padding:10px 0;border-radius:30px;border:2px solid #001f3f;text-decoration:none;font-weight:600;font-size:13px;">Join</a>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:18px;">
-      <div><div style="font-weight:700;color:#001f3f;">Purchase History</div><div style="color:#666;">Track an order, start a return or exchange</div></div>
-      <div><div style="font-weight:700;color:#001f3f;">My List</div><div style="color:#666;">Your saved items</div></div>
-      <div><div style="font-weight:700;color:#001f3f;">Account Settings</div><div style="color:#666;">Update info, payment, addresses, email preferences</div></div>
-    </div>
+<div id="profileMenu" style="position:fixed;top:0;right:-100%;width:70%;height:100vh;background:#fff;box-shadow:-2px 0 5px rgba(0,0,0,.2);transition:right .3s;z-index:1001;padding:25px 20px;border-top-left-radius:25px;border-bottom-left-radius:25px;font-size:12px;">
+  <button onclick="closeProfileMenu()" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
+  <h2 style="font-weight:700;color:#001f3f;font-size:20px;margin-bottom:5px;">Your Account</h2>
+  <p style="color:#555;margin-bottom:20px;">Sign in for rewards, easy order tracking and more.</p>
+  <div style="display:flex;gap:8px;margin-bottom:24px;">
+    <a href="login.html" style="flex:1;text-align:center;background:#001f3f;color:#fff;padding:10px 0;border-radius:30px;text-decoration:none;font-weight:600;font-size:13px;">Sign In</a>
+    <a href="signup.html" style="flex:1;text-align:center;color:#001f3f;padding:10px 0;border-radius:30px;border:2px solid #001f3f;text-decoration:none;font-weight:600;font-size:13px;">Join</a>
   </div>
-  <div id="sidebarOverlay" onclick="closeSidebar()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999;background:rgba(0,0,0,.3);display:none;"></div>
-  <div id="profileOverlay" onclick="closeProfileMenu()" style="position:fixed;top:0;right:0;width:100vw;height:100vh;z-index:998;background:rgba(0,0,0,.3);display:none;"></div>
+
+  <div style="display:flex;flex-direction:column;gap:18px;">
+    <!-- هذول للحين مو شغالين -->
+    <div><div style="font-weight:700;color:#001f3f;">Purchase History</div><div style="color:#666;">Track an order, start a return or exchange</div></div>
+    <div><div style="font-weight:700;color:#001f3f;">My List</div><div style="color:#666;">Your saved items</div></div>
+
+    <!-- هذا شغّال: -->
+    <a href="./account-settings.html" id="accountSettingsLink" style="display:block;text-decoration:none;">
+      <div style="font-weight:700;color:#001f3f;">Account Settings</div>
+      <div style="color:#666;">Update info, payment, addresses, email preferences</div>
+    </a>
+  </div>
+</div>
+
+<div id="sidebarOverlay" onclick="closeSidebar()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999;background:rgba(0,0,0,.3);display:none;"></div>
+<div id="profileOverlay" onclick="closeProfileMenu()" style="position:fixed;top:0;right:0;width:100vw;height:100vh;z-index:998;background:rgba(0,0,0,.3);display:none;"></div>
 
   <!-- App Menu Sidebar -->
   <div id="sidebar" class="sidebar" onclick="event.stopPropagation()">
@@ -343,7 +373,7 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
   <!-- ====== New Shop Section (Hollister-like) ====== -->
   <section class="shop">
     <!-- Left Filters -->
-    <aside class="filters">
+    <aside class="filters filter-scroll">
   <h3>Filter</h3>
 
   <!-- Category -->
@@ -669,6 +699,16 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
     row.scrollLeft = scrollLeft - walk;
   });
 })();
+
+  // اختياري: سكّر البانل قبل التحويل
+  const link = document.getElementById('accountSettingsLink');
+  if (link) {
+    link.addEventListener('click', function () {
+      try { closeProfileMenu(); } catch(e) {}
+      // ما يحتاج preventDefault — خله يحوّل طبيعي
+    });
+  }
 </script>
+
 </body>
 </html>
