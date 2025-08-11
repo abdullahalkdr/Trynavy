@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تأكيد الطلب - TryNavy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    :root{
+      --navy:#001f3f;
+      --text:#111;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --bg:#f8fafc;
+    }
+    body{margin:0;background:var(--bg);font-family:'Barlow',sans-serif;color:var(--text);}
+    .container{max-width:700px;margin:40px auto;padding:20px;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1);}
+    h1{text-align:center;color:var(--navy);}
+    .order-info{margin-top:20px;border-top:1px solid var(--border);padding-top:20px;}
+    .summary-line{display:flex;justify-content:space-between;margin:8px 0;}
+    .items{margin-top:20px;}
+    .item{display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:10px 0;}
+    .muted{color:var(--muted);}
+    .btn{display:block;width:100%;padding:12px;background:var(--navy);color:#fff;text-align:center;border-radius:6px;text-decoration:none;font-weight:700;margin-top:20px;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>شكراً لطلبك!</h1>
+    <p style="text-align:center">تم إتمام عملية الدفع بنجاح</p>
+
+    <div class="order-info">
+      <div class="summary-line"><span>رقم الطلب</span> <strong id="orderNo"></strong></div>
+      <div class="summary-line"><span>المجموع قبل الخصم</span> <span id="subtotal"></span></div>
+      <div class="summary-line"><span>قيمة الخصم</span> <span id="discount"></span></div>
+      <div class="summary-line"><span>الإجمالي</span> <strong id="total"></strong></div>
+    </div>
+
+    <div class="items" id="itemsList"></div>
+
+    <a href="index.html" class="btn">العودة للصفحة الرئيسية</a>
+  </div>
+
+  <script>
+    const order = JSON.parse(localStorage.getItem('lastOrder') || '{}');
+    if(order.orderNo){
+      document.getElementById('orderNo').textContent = order.orderNo;
+      document.getElementById('subtotal').textContent = order.subtotal.toFixed(3) + ' د.ك';
+      document.getElementById('discount').textContent = '- ' + order.discount.toFixed(3) + ' د.ك';
+      document.getElementById('total').textContent = order.total.toFixed(3) + ' د.ك';
+
+      const list = document.getElementById('itemsList');
+      order.items.forEach(it=>{
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `<span>${it.name || 'منتج'}</span> <span>${(Number(it.price)||0).toFixed(3)} د.ك × ${it.qty || 1}</span>`;
+        list.appendChild(div);
+      });
+    } else {
+      document.querySelector('.container').innerHTML = '<h1>لا يوجد طلب</h1><p style="text-align:center">الرجاء العودة للسلة وإتمام الطلب</p>';
+    }
+  </script>
+</body>
+</html>

@@ -15,6 +15,26 @@ const Loyalty = (() => {
 
   const db = { customers: new Map() };
 
+  const STORAGE_KEY = 'navy_loyalty_db';
+
+  function loadDB(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return;
+      const obj = JSON.parse(raw);
+      const map = new Map();
+      Object.entries(obj.customers || {}).forEach(([k,v]) => map.set(k, v));
+      db.customers = map;
+    }catch(e){}
+  }
+  function saveDB(){
+    try{
+      const obj = { customers: Object.fromEntries(db.customers) };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+    }catch(e){}
+  }
+  loadDB();
+
   const monthKey = () => {
     const d = new Date();
     return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}`;
@@ -26,6 +46,7 @@ const Loyalty = (() => {
     const key = customerKey({email, phone});
     if (!db.customers.has(key)) {
       db.customers.set(key, { email, phone, points: 0, usedDiscount: {}, sizeHistory: {} });
+      saveDB();
     }
     return db.customers.get(key);
   };
@@ -45,6 +66,7 @@ const Loyalty = (() => {
       if (!s) return;
       customer.sizeHistory[s] = (customer.sizeHistory[s]||0) + (Number(it.qty)||1);
     });
+    saveDB();
     return pts;
   };
 
@@ -84,6 +106,7 @@ const Loyalty = (() => {
     const mk = monthKey();
     customer.usedDiscount[mk] = (customer.usedDiscount[mk]||0) + discountKwd;
   };
+  saveDB();
 
   return { getOrCreateCustomer, accruePoints, computeDiscount, applyDiscount, getTier, topSizes, __db: db };
 })();

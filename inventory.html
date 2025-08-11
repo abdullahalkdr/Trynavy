@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NAVY • إدارة المخزون</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Barlow',sans-serif;margin:0;background:#f6f7f9;color:#0f172a}
+    .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+    .col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-12{grid-column:span 12}
+    input,select{width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:10px}
+    button{padding:10px 14px;border:0;border-radius:10px;background:#0a2a47;color:#fff;font-weight:700;cursor:pointer}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{border-bottom:1px solid #eee;padding:10px;text-align:start}
+    .muted{color:#6b7280}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>إدارة المخزون</h1>
+
+    <div class="card">
+      <h3>إضافة/تعديل منتج</h3>
+      <div class="grid">
+        <div class="col-3"><input id="id" placeholder="ID (مثال: p-1004)"></div>
+        <div class="col-3"><input id="sku" placeholder="SKU"></div>
+        <div class="col-6"><input id="name" placeholder="الاسم"></div>
+        <div class="col-3"><input id="price" type="number" step="0.001" placeholder="السعر (د.ك)"></div>
+        <div class="col-3"><input id="stock" type="number" placeholder="المخزون"></div>
+        <div class="col-3"><input id="size" placeholder="المقاس (M/L/XL…)"></div>
+        <div class="col-3"><input id="color" placeholder="اللون"></div>
+        <div class="col-12"><input id="image" placeholder="رابط الصورة"></div>
+        <div class="col-12"><button id="saveBtn">حفظ المنتج</button></div>
+      </div>
+      <div class="muted" style="margin-top:8px">لو الـ ID موجود سيتم التعديل، وإن كان جديد سيتم الإنشاء.</div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>قائمة المنتجات</h3>
+      <table id="tbl"><thead>
+        <tr><th>ID</th><th>الاسم</th><th>SKU</th><th>السعر</th><th>المخزون</th><th>المقاس</th><th>لون</th><th></th></tr>
+      </thead><tbody></tbody></table>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>سجل الحركات</h3>
+      <div id="log" class="muted" style="white-space:pre-wrap"></div>
+    </div>
+  </div>
+
+  <script src="inventory.js"></script>
+  <script>
+    const $ = s => document.querySelector(s);
+    const tbody = $('#tbl tbody');
+    const logBox = $('#log');
+
+    function render() {
+      const rows = Inventory.all().map(p => `
+        <tr>
+          <td>${p.id}</td>
+          <td>${p.name||'-'}</td>
+          <td>${p.sku||'-'}</td>
+          <td>${(p.priceKwd||0).toFixed(3)}</td>
+          <td>${p.stock||0}</td>
+          <td>${p.size||'-'}</td>
+          <td>${p.color||'-'}</td>
+          <td>
+            <button onclick="quickAdjust('${p.id}',1)">+1</button>
+            <button onclick="quickAdjust('${p.id}',-1)" style="background:#9a3412">-1</button>
+          </td>
+        </tr>`).join('');
+      tbody.innerHTML = rows || `<tr><td colspan="8" class="muted">لا توجد منتجات.</td></tr>`;
+
+      const history = Inventory.history(50).map(
+        x => `${x.ts} • ${x.type}${x.id?` • ${x.id}`:''}${x.delta!=null?` • Δ${x.delta}`:''}${x.stock!=null?` • stock=${x.stock}`:''}`
+      ).join('\n');
+      logBox.textContent = history || 'لا يوجد سجل حتى الآن.';
+    }
+
+    function quickAdjust(id, delta) {
+      Inventory.adjustStock(id, delta);
+      render();
+    }
+
+    $('#saveBtn').addEventListener('click', () => {
+      const product = {
+        id: $('#id').value.trim(),
+        sku: $('#sku').value.trim(),
+        name: $('#name').value.trim(),
+        priceKwd: Number($('#price').value || 0),
+        stock: Number($('#stock').value || 0),
+        size: $('#size').value.trim().toUpperCase(),
+        color: $('#color').value.trim(),
+        image: $('#image').value.trim()
+      };
+      if (!product.id) { alert('ID لازم'); return; }
+      Inventory.upsert(product);
+      render();
+      alert('تم الحفظ');
+    });
+
+    render();
+  </script>
+</body>
+</html>

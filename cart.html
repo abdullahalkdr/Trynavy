@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -236,9 +236,17 @@
       sumTotal.textContent = subtotal.toFixed(3) + ' د.ك';
 
       // Loyalty calculation
-      const userEmail = localStorage.getItem('userEmail') || 'guest@example.com';
-      const userPhone = localStorage.getItem('userPhone') || '00000000';
-      const customer = Loyalty.getOrCreateCustomer({ email: userEmail, phone: userPhone });
+      const authUser = (window.NAVY_AUTH && window.NAVY_AUTH.getLoggedInUser)
+  ? (window.NAVY_AUTH.getLoggedInUser() || {})
+  : {};
+const userEmail = authUser.email || 'guest@example.com';
+
+// جرّب نكوّن التليفون من البروفايل لو محفوظ
+const phoneFromProfile = authUser.profile && (authUser.profile.phoneCode || '') + (authUser.profile.phone || '');
+const userPhone = (authUser.phone || phoneFromProfile || '').trim() || '00000000';
+
+const customer = Loyalty.getOrCreateCustomer({ email: userEmail, phone: userPhone });
+
 
       const result = Loyalty.computeDiscount(customer, getCartLines());
       const discount = Number(result.discountKwd || 0);
@@ -291,15 +299,24 @@
     });
 
     // ---- Checkout ----
-    document.getElementById('checkoutBtn').addEventListener('click',()=>{
-      // ثبّت استخدام الخصم الشهري قبل التحويل/الدفع
-      try{
-        const customer = Loyalty.getOrCreateCustomer(window.__lastCustomerKey || { email:'guest@example.com', phone:'00000000' });
-        const r = window.__lastLoyaltyResult || Loyalty.computeDiscount(customer, getCartLines());
-        Loyalty.applyDiscount(customer, Number(r.discountKwd||0));
-      }catch(e){}
-      alert('هنا يتم ربط بوابة الدفع لاحقاً (Checkout).');
-    });
+    document.getElementById('checkoutBtn').addEventListener('click', ()=>{
+  try{
+    const customer = Loyalty.getOrCreateCustomer(window.__lastCustomerKey || { email:'guest@example.com', phone:'00000000' });
+    const r = window.__lastLoyaltyResult || Loyalty.computeDiscount(customer, getCartLines());
+    Loyalty.applyDiscount(customer, Number(r.discountKwd||0));
+
+    // نقاط على الإجمالي بعد الخصم:
+    const subtotal = bag.reduce((a,b)=> a + (Number(b.price)||0) * (Number(b.qty)||1), 0);
+    const paid = Math.max(0, subtotal - Number(r.discountKwd||0));
+    Loyalty.accruePoints(customer, paid, getCartLines());
+
+    // صفّر السلة واحفظها
+    localStorage.setItem('cart', '[]');
+  }catch(e){}
+
+  // (محاكاة) تحويل الدفع – حالياً رجّع المستخدم للرئيسية
+  window.location.href = 'knet.html';
+});
 
     // ---- Order number ----
     const orderNo = '2' + Math.floor(100000000 + Math.random()*900000000);

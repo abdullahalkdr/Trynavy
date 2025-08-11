@@ -274,6 +274,35 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
 @media (max-width: 991px){
   .filter-scroll{ max-height: none; overflow: visible; position: static; }
 }
+
+/* ===== PDP (Hollister-like) ===== */
+.pdp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:1100}
+.pdp{position:fixed;right:-100%;top:0;height:100vh;width:100%;max-width:980px;background:#fff;z-index:1101;transition:right .32s ease;border-top-left-radius:24px;border-bottom-left-radius:24px;overflow-y:auto}
+@media (max-width:768px){ .pdp{max-width:100%} }
+.pdp-hd{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #e7e3dc;position:sticky;top:0;background:#fff;z-index:2}
+.pdp-body{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:18px}
+@media (max-width:992px){ .pdp-body{grid-template-columns:1fr} }
+.pdp-gallery{display:grid;gap:10px}
+.pdp-gallery img{width:100%;border-radius:10px;display:block}
+.pdp-title{font-size:20px;font-weight:800;margin:0 0 6px;color:#111}
+.pdp-price{font-weight:800;color:#001f3f;margin:6px 0 16px}
+.section-hd{font-weight:700;margin:12px 0 6px}
+.color-row,.size-row{display:flex;gap:10px;flex-wrap:wrap}
+.swatch-lg{width:28px;height:28px;border-radius:50%;border:1px solid #d5d5d5;cursor:pointer;position:relative;outline:none}
+.swatch-lg.active{box-shadow:0 0 0 2px #001f3f inset;border-color:#001f3f}
+.size-chip{min-width:38px;height:38px;border:1px solid #d7d7d7;border-radius:999px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;background:#fff}
+.size-chip.disabled{opacity:.4;cursor:not-allowed;text-decoration:line-through}
+.size-chip.active{border-color:#001f3f;box-shadow:0 0 0 2px #001f3f inset}
+.pdp-actions{display:flex;gap:10px;margin-top:16px}
+.btn-pill{flex:1;padding:12px 14px;border:none;border-radius:999px;font-weight:800;cursor:pointer}
+.btn-primary{background:#001f3f;color:#fff}
+.btn-ghost{background:#fff;border:1px solid #e7e3dc;color:#111}
+.pdp-meta{margin-top:14px;border-top:1px solid #e7e3dc}
+.meta-item{padding:14px 0;border-bottom:1px solid #e7e3dc;display:flex;justify-content:space-between;align-items:center;font-weight:600;color:#2c2c2c}
+.meta-item i{font-size:12px;color:#6b6b6b}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:10px;border:1px solid #e7e3dc;border-radius:10px;background:#fff}
+.badge-dot{width:36px;height:36px;border-radius:50%}
+
   </style>
 </head>
 <body>
@@ -589,7 +618,7 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
         </select>
       </div>
 
-      <div class="grid">
+      <div class="grid" id="productsGrid">
         <!-- Promo Banner -->
         <a class="promo" href="#">
           <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop" alt="Promo">
@@ -662,9 +691,10 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
         <button style="width:100%;background:#2c2c2c;color:#fff;padding:12px 0;border:none;border-radius:50px;font-weight:700;">Join</button>
         <div style="margin-top:30px;display:flex;justify-content:space-between;align-items:center;max-width:240px;">
           <i class="fab fa-tiktok" style="color:#777;font-size:20px;"></i>
-          <i class="fab fa-instagram" style="color:#777;font-size:20px;"></i>
+          <a href="https://www.instagram.com/try.navy" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-instagram" style="color:#777;font-size:20px;"></i>
+          </a>
           <i class="fab fa-facebook-f" style="color:#777;font-size:20px;"></i>
-          <i class="fab fa-pinterest-p" style="color:#777;font-size:20px;"></i>
           <i class="fab fa-youtube" style="color:#777;font-size:20px;"></i>
         </div>
       </div>
@@ -754,14 +784,90 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
 
 <!-- لازم يكون قبل استخدام Loyalty -->
 <script src="loyalty.js"></script>
+<script>
+  function getAuthUser(){
+    if (window.NAVY_AUTH && typeof window.NAVY_AUTH.getLoggedInUser === 'function'){
+      return window.NAVY_AUTH.getLoggedInUser() || null;
+    }
+    // fallback من localStorage
+    const email = localStorage.getItem('userEmail');
+    const name  = localStorage.getItem('userName');
+    const phone = localStorage.getItem('userPhone');
+    const phoneCode = localStorage.getItem('userPhoneCode') || '';
+    if (email) return { email, name, profile: { phoneCode, phone } };
+    return null;
+  }
+
+  function updateAuthUI(){
+    const user = getAuthUser();
+    const loggedIn = !!(user && user.email);
+
+    const loginLink   = document.querySelector('[data-login-link]');
+    const userBtn     = document.querySelector('[data-user-button]');
+    const nameSlots   = document.querySelectorAll('[data-user-name]');
+    const accountTitle= document.querySelector('[data-account-title]');
+    const authTabs    = document.getElementById('authTabs');
+    const signOutLink = document.getElementById('signOutAction');
+
+    if (loginLink)   loginLink.style.display   = loggedIn ? 'none' : 'inline-block';
+    if (userBtn)     userBtn.style.display     = loggedIn ? 'inline-flex' : 'none';
+    if (authTabs)    authTabs.style.display    = loggedIn ? 'none' : 'flex';
+    if (signOutLink) signOutLink.style.display = loggedIn ? 'block' : 'none';
+
+    nameSlots.forEach(el => {
+      el.textContent = loggedIn ? (user.name || (user.email||'').split('@')[0]) : 'Guest';
+    });
+    if (accountTitle) accountTitle.textContent = loggedIn ? 'Your Account' : 'Welcome';
+
+    // حدث البادج حسب المستخدم الحالي
+    try{
+      const email = loggedIn ? user.email : 'guest@example.com';
+      const phone = (user?.profile?.phoneCode || '') + (user?.profile?.phone || '') || '00000000';
+      const customer = Loyalty.getOrCreateCustomer({ email, phone });
+      const t = Loyalty.getTier(customer.points);
+      const el = document.getElementById('navy-points-badge');
+      if (el){
+        el.innerHTML = `
+          <div style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #e7e3dc;border-radius:10px;background:#fff;">
+            <div style="width:36px;height:36px;border-radius:50%;background:${t.color};"></div>
+            <div style="line-height:1.25">
+              <div style="font-weight:600;">Navy Points • ${t.name}</div>
+              <div style="font-size:12px;color:#6b6b6b;">${customer.points} pts • ${t.discountPct}% off on preferred sizes</div>
+            </div>
+          </div>
+        `;
+      }
+    }catch(e){}
+  }
+
+  // Logout متكامل
+  function logout(){
+    try { if (window.NAVY_AUTH?.logout) window.NAVY_AUTH.logout(); } catch(e){}
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userPhone');
+    localStorage.removeItem('userPhoneCode');
+    try { closeProfileMenu(); } catch(e){}
+    window.dispatchEvent(new Event('navy:auth-changed'));
+    updateAuthUI();
+  }
+  window.logout = logout;
+
+  document.addEventListener('DOMContentLoaded', updateAuthUI);
+  window.addEventListener('navy:auth-changed', updateAuthUI);
+</script>
 
 <script>
   // بيانات المستخدم (عدّل لو عندك مفاتيح مختلفة)
-  const userEmail = localStorage.getItem('userEmail') || 'guest@example.com';
-  const userPhone = localStorage.getItem('userPhone') || '00000000';
+  const authUser = (window.NAVY_AUTH && window.NAVY_AUTH.getLoggedInUser)
+  ? (window.NAVY_AUTH.getLoggedInUser() || {})
+  : {};
+const userEmail = authUser.email || 'guest@example.com';
+const phoneFromProfile = authUser.profile && (authUser.profile.phoneCode || '') + (authUser.profile.phone || '');
+const userPhone = (authUser.phone || phoneFromProfile || '').trim() || '00000000';
 
-  // إنشاء/جلب العميل
-  const customer = Loyalty.getOrCreateCustomer({ email: userEmail, phone: userPhone });
+const customer = Loyalty.getOrCreateCustomer({ email: userEmail, phone: userPhone });
+
 
   // رسم البادج
   (function renderBadge() {
@@ -779,8 +885,263 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
     `;
   })();
 </script>
+<div id="pdpOverlay" class="pdp-overlay" onclick="closePDP()"></div>
+<div id="pdp" class="pdp" onclick="event.stopPropagation()">
+  <div class="pdp-hd">
+    <div style="font-weight:800;color:#001f3f">NAVY</div>
+    <button onclick="closePDP()" style="background:none;border:0;font-size:22px;cursor:pointer">×</button>
+  </div>
+
+  <div class="pdp-body">
+    <div class="pdp-gallery" id="pdpGallery"></div>
+
+    <div>
+      <h1 class="pdp-title" id="pdpTitle"></h1>
+      <div class="pdp-price" id="pdpPrice"></div>
+
+      <div class="badge" id="loyaltyBadge" style="margin:6px 0 14px;">
+        <div class="badge-dot" id="badgeDot"></div>
+        <div style="line-height:1.2">
+          <div style="font-weight:700">Navy Points</div>
+          <div id="badgeText" style="font-size:12px;color:#6b6b6b"></div>
+        </div>
+      </div>
+
+      <div class="section-hd">Color</div>
+      <div class="color-row" id="pdpColors"></div>
+
+      <div class="section-hd" style="display:flex;align-items:center;gap:8px">
+        Size <span id="sizeHint" style="font-weight:400;color:#6b6b6b;font-size:13px"></span>
+      </div>
+      <div class="size-row" id="pdpSizes"></div>
+
+      <div class="pdp-actions">
+        <button class="btn-pill btn-primary" id="addToBagBtn">Add to Bag</button>
+        <button class="btn-pill btn-ghost" id="saveBtn"><i class="fa-regular fa-heart"></i>&nbsp;Save</button>
+      </div>
+
+      <div class="pdp-meta">
+        <div class="meta-item"><span>Details & Material</span><i class="fa fa-plus"></i></div>
+        <div class="meta-item"><span>Size & Fit</span><i class="fa fa-plus"></i></div>
+        <div class="meta-item"><span>Shipping & Returns</span><i class="fa fa-plus"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="auth.js"></script>
 <script>
+  const PRODUCTS = [
+  {
+    id:'shorts-hybrid',
+    name:'Mid-Thigh Hybrid Active Shorts',
+    price: 12.534,
+    images: [
+      'https://picsum.photos/700/800?random=101',
+      'https://picsum.photos/700/800?random=102',
+      'https://picsum.photos/700/800?random=103'
+    ],
+    colors: [
+      {code:'#0b0b0b', name:'Black', imagesIndex:[0,1,2]},
+      {code:'#6b7280', name:'Grey',  imagesIndex:[0,2,1]},
+      {code:'#e5e7eb', name:'White', imagesIndex:[2,1,0]},
+      {code:'#1f2937', name:'Navy',  imagesIndex:[1,0,2]}
+    ],
+    sizes:['XS','S','M','L','XL','XXL'],
+    url:'index.html#shorts-hybrid'
+  },
+  {
+  id:'classic-hoodie',
+  name:'Classic Navy Hoodie',
+  price: 18.750,
+  images:[
+    'img/products/hoodie1.jpg',
+    'img/products/hoodie1.jpg'
+  ],
+  colors:[
+    {code:'#001f3f', name:'Navy', imagesIndex:[0,1]},
+    {code:'#111827', name:'Black', imagesIndex:[0,1]}
+  ],
+  sizes:['S','M','L','XL','XXL'],
+  url:'index.html#classic-hoodie'
+},
+  {
+    id:'tee-boxy',
+    name:'Boxy Heavyweight Cotton Crew T‑Shirt',
+    price: 7.834,
+    images: [
+      'https://picsum.photos/700/800?random=201',
+      'https://picsum.photos/700/800?random=202'
+    ],
+    colors: [
+      {code:'#ffffff', name:'White',  imagesIndex:[0,1]},
+      {code:'#111827', name:'Black',  imagesIndex:[1,0]},
+      {code:'#cbd5e1', name:'Silver', imagesIndex:[0,1]}
+    ],
+    sizes:['XS','S','M','L','XL','XXL','XXXL'],
+    url:'index.html#tee-boxy'
+  },
+  {
+    id:'sweat-baggy',
+    name:'Baggy Sweatpants',
+    price: 14.104,
+    images: [
+      'https://picsum.photos/700/800?random=301',
+      'https://picsum.photos/700/800?random=302'
+    ],
+    colors: [
+      {code:'#111827',name:'Black',imagesIndex:[0,1]},
+      {code:'#374151',name:'Charcoal',imagesIndex:[1,0]}
+    ],
+    sizes:['S','M','L','XL'],
+    url:'index.html#sweat-baggy'
+  }
+];
+
+/* ---------- رندر شبكة المنتجات ---------- */
+const gridEl = document.getElementById('productsGrid');
+function cardHTML(p){
+  // swatches صغيرة مثل الهوم
+  const sw = p.colors.slice(0,3).map(c=>`<span class="swatch" style="background:${c.code}"></span>`).join('') +
+             (p.colors.length>3?`<span class="swatch more">+${p.colors.length-3}</span>`:'');
+  // أول صورة
+  const cover = p.images[0];
+  return `
+    <div class="product">
+      <button class="wish"><i class="fa-regular fa-heart"></i></button>
+      <img src="${cover}" alt="${p.name}">
+      <div class="swatches">${sw}</div>
+      <h2>${p.name}</h2>
+      <div class="price">KD ${p.price.toFixed(3)}</div>
+      <button class="btn-pill btn-ghost" onclick="openPDP('${p.id}')">View</button>
+    </div>
+  `;
+}
+gridEl.innerHTML =
+  (gridEl.querySelector('.promo') ? gridEl.innerHTML : '') +
+  PRODUCTS.map(cardHTML).join('');
+
+/* ---------- PDP Logic ---------- */
+let currentProduct = null;
+let selectedColorIndex = 0;
+let selectedSize = '';
+
+const pdpEl = document.getElementById('pdp');
+const pdpOverlay = document.getElementById('pdpOverlay');
+
+function openPDP(id){
+  currentProduct = PRODUCTS.find(p=>p.id===id);
+  if(!currentProduct) return;
+
+  // عنوان + سعر
+  document.getElementById('pdpTitle').textContent = currentProduct.name;
+  document.getElementById('pdpPrice').textContent = 'KD ' + currentProduct.price.toFixed(3);
+
+  // Loyalty badge (يقرأ من loyalty.js)
+  try{
+    const userEmail = localStorage.getItem('userEmail') || 'guest@example.com';
+    const userPhone = localStorage.getItem('userPhone') || '00000000';
+    const customer = Loyalty.getOrCreateCustomer({ email:userEmail, phone:userPhone });
+    const t = Loyalty.getTier(customer.points);
+    document.getElementById('badgeDot').style.background = t.color;
+    document.getElementById('badgeText').textContent = `${customer.points} pts • ${t.discountPct}% off on preferred sizes`;
+  }catch(e){}
+
+  // صور حسب اللون الأول
+  selectedColorIndex = 0;
+  renderGalleryForColor(0);
+
+  // الألوان
+  const colorsWrap = document.getElementById('pdpColors');
+  colorsWrap.innerHTML = currentProduct.colors.map((c,i)=>(
+    `<button class="swatch-lg ${i===0?'active':''}" style="background:${c.code}" aria-label="${c.name}" onclick="selectColor(${i})"></button>`
+  )).join('');
+
+  // المقاسات
+  const sizesWrap = document.getElementById('pdpSizes');
+  sizesWrap.innerHTML = currentProduct.sizes.map(s=>(
+    `<button class="size-chip" data-size="${s}" onclick="selectSize('${s}', this)">${s}</button>`
+  )).join('');
+  selectedSize = '';
+  document.getElementById('sizeHint').textContent = '(Select size)';
+
+  // أزرار
+  document.getElementById('addToBagBtn').onclick = addToBag;
+
+  // فتح
+  pdpOverlay.style.display = 'block';
+  requestAnimationFrame(()=>{ pdpEl.style.right = '0'; });
+}
+function closePDP(){
+  pdpEl.style.right = '-100%';
+  setTimeout(()=>{ pdpOverlay.style.display='none'; }, 280);
+}
+function renderGalleryForColor(colorIdx){
+  const idxs = currentProduct.colors[colorIdx].imagesIndex || [0];
+  const imgs = idxs.map(i=>currentProduct.images[i]);
+  document.getElementById('pdpGallery').innerHTML = imgs.map(src=>`<img src="${src}">`).join('');
+}
+function selectColor(i){
+  selectedColorIndex = i;
+  renderGalleryForColor(i);
+  document.querySelectorAll('#pdpColors .swatch-lg').forEach((b,idx)=>b.classList.toggle('active', idx===i));
+}
+function selectSize(s, btn){
+  selectedSize = s;
+  document.querySelectorAll('#pdpSizes .size-chip').forEach(el=>el.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sizeHint').textContent = `(Selected: ${s})`;
+}
+
+/* ---------- Add to Bag ---------- */
+function addToBag(){
+  if(!currentProduct){ return; }
+  if(!selectedSize){
+    alert('Select a size first'); return;
+  }
+  const color = currentProduct.colors[selectedColorIndex]?.name || '';
+  const image = currentProduct.images[ (currentProduct.colors[selectedColorIndex]?.imagesIndex||[0])[0] ] || currentProduct.images[0];
+
+  const line = {
+    sku: currentProduct.id,
+    name: currentProduct.name,
+    price: currentProduct.price,
+    size: selectedSize,
+    color: color,
+    image: image,
+    qty: 1,
+    productUrl: currentProduct.url
+  };
+
+  const cart = JSON.parse(localStorage.getItem('cart')||'[]');
+  cart.push(line);
+  localStorage.setItem('cart', JSON.stringify(cart));
+
+  // حدّث عدّاد السلة
+  updateCartCount?.();
+
+  // نقاط ولاء منطقية بعد الشراء – هنا نقدر نراكم «نية طلب» لو حاب
+  try {
+    const userEmail = localStorage.getItem('userEmail') || 'guest@example.com';
+    const userPhone = localStorage.getItem('userPhone') || '00000000';
+    const customer = Loyalty.getOrCreateCustomer({ email:userEmail, phone:userPhone });
+    // لا نضيف نقاط الآن (تُضاف بعد الدفع)، فقط نحدّث تفضيلات المقاسات:
+    Loyalty.accruePoints(customer, 0, [{ size: selectedSize, qty:1 }]);
+  } catch(e){}
+
+  // نفس سلوك هولستر: إشعار سريع
+  closePDP();
+  toast('Added to Bag');
+}
+
+/* ---------- Toast بسيط ---------- */
+function toast(msg){
+  const t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#001f3f;color:#fff;padding:10px 14px;border-radius:999px;font-weight:800;z-index:2000';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),1300);
+}
   // === تخزين حالة الدخول يتم بعد نجاح اللوق-إن في login.html مثلا ===
   // مثال: localStorage.setItem('navy_token', '1');
   //       localStorage.setItem('navy_user', JSON.stringify({ fullName:'Abdullah Alkhudair', email:'you@x.com' }));
