@@ -302,6 +302,28 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
 .meta-item i{font-size:12px;color:#6b6b6b}
 .badge{display:inline-flex;align-items:center;gap:8px;padding:10px;border:1px solid #e7e3dc;border-radius:10px;background:#fff}
 .badge-dot{width:36px;height:36px;border-radius:50%}
+.join-btn {
+  width: 100%;
+  background: #2c2c2c;
+  color: #fff;
+  padding: 12px 0;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.join-btn:active {
+  transform: scale(0.96);
+  background: #1a1a1a;
+}
+
+.join-btn.success {
+  background: #28a745 !important; /* أخضر */
+  color: #fff !important;
+}
+
 
   </style>
 </head>
@@ -687,8 +709,11 @@ html[dir="rtl"] .cat-row{ direction: rtl; }
       </div>
       <div style="flex:1;min-width:250px;">
         <h4 style="color:#2c2c2c;font-weight:700;">Subscribe</h4>
-        <input type="email" placeholder="Email Address" style="width:100%;padding:12px 0;border:none;border-bottom:2px solid #333;background:transparent;margin-bottom:15px;color:#000;">
-        <button style="width:100%;background:#2c2c2c;color:#fff;padding:12px 0;border:none;border-radius:50px;font-weight:700;">Join</button>
+<input id="subscribeEmail" type="email" placeholder="Email Address"
+       style="width:100%;padding:12px 0;border:none;border-bottom:2px solid #333;background:transparent;margin-bottom:15px;color:#000;">
+<button id="subscribeBtn" class="join-btn">Join</button>
+
+</button>
         <div style="margin-top:30px;display:flex;justify-content:space-between;align-items:center;max-width:240px;">
           <i class="fab fa-tiktok" style="color:#777;font-size:20px;"></i>
           <a href="https://www.instagram.com/try.navy" target="_blank" rel="noopener noreferrer">
@@ -930,6 +955,80 @@ const customer = Loyalty.getOrCreateCustomer({ email: userEmail, phone: userPhon
 </div>
 
 <script src="auth.js"></script>
+<script>
+  // Prefill إذا المستخدم داخل
+  document.addEventListener('DOMContentLoaded', function(){
+    try{
+      if (window.NAVY_AUTH && NAVY_AUTH.isLoggedIn()) {
+        const u = NAVY_AUTH.getLoggedInUser() || {};
+        if (u.email) document.getElementById('subscribeEmail').value = u.email;
+      }
+    }catch(e){}
+  });
+
+  // Toast بسيط
+  function toast(msg){
+    const t = document.createElement('div');
+    t.textContent = msg;
+    t.style.cssText = 'position:fixed;bottom:22px;left:50%;transform:translateX(-50%);'+
+                      'background:#2c2c2c;color:#fff;padding:12px 16px;border-radius:12px;'+
+                      'box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:9999;font-weight:700';
+    document.body.appendChild(t); setTimeout(()=>t.remove(), 1800);
+  }
+
+  // تفعيل الاشتراك
+  document.getElementById('subscribeBtn').addEventListener('click', function(){
+    const input = document.getElementById('subscribeEmail');
+    const email = (input.value || '').trim().toLowerCase();
+
+    // فحص بسيط للإيميل
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!ok) { toast('رجاء اكتب إيميل صحيح'); input.focus(); return; }
+
+    // إرسال الطلب إلى Mailchimp
+fetch("https://us7.api.mailchimp.com/3.0/lists/f9fc94e1a7/members", {
+    method: "POST",
+    headers: {
+        "Authorization": "apikey 924ff9df4411130e0744df36573cbbb4-us7",
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        email_address: email,
+        status: "subscribed"
+    })
+})
+.then(res => {
+    if (res.status < 300) {
+        toast('تم الاشتراك بنجاح ✅');
+        const btn = document.getElementById('subscribeBtn');
+        btn.textContent = '✅ Done';
+        btn.classList.add('success');
+        setTimeout(() => {
+            btn.textContent = 'Join';
+            btn.classList.remove('success');
+        }, 1200);
+        input.value = '';
+    } else {
+        toast('❌ لم يتم الاشتراك، حاول مرة أخرى');
+    }
+})
+.catch(err => {
+    console.error(err);
+    toast('⚠ خطأ في الاتصال، حاول لاحقاً');
+});
+
+
+// تغيير الزر مؤقتاً
+const btn = document.getElementById('subscribeBtn');
+btn.textContent = '✅ Done';
+btn.classList.add('success');
+setTimeout(() => {
+  btn.textContent = 'Join';
+  btn.classList.remove('success');
+}, 1200);
+
+  });
+  </script>
 <script>
   const PRODUCTS = [
   {
