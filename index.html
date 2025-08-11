@@ -977,44 +977,48 @@ const customer = Loyalty.getOrCreateCustomer({ email: userEmail, phone: userPhon
   }
 
   // تفعيل الاشتراك
-  document.getElementById('subscribeBtn').addEventListener('click', function(){
-    const input = document.getElementById('subscribeEmail');
-    const email = (input.value || '').trim().toLowerCase();
+  // تفعيل الاشتراك عبر API السيرفر
+document.getElementById('subscribeBtn').addEventListener('click', async function(){
+  const input = document.getElementById('subscribeEmail');
+  const btn   = document.getElementById('subscribeBtn');
+  const email = (input.value || '').trim().toLowerCase();
 
-    // فحص بسيط للإيميل
-    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!ok) { toast('رجاء اكتب إيميل صحيح'); input.focus(); return; }
+  // فحص الإيميل
+  const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!ok) { toast('رجاء اكتب إيميل صحيح'); input.focus(); return; }
 
-    // إرسال الطلب إلى Mailchimp
-fetch("https://us7.api.mailchimp.com/3.0/lists/f9fc94e1a7/members", {
-    method: "POST",
-    headers: {
-        "Authorization": "apikey 924ff9df4411130e0744df36573cbbb4-us7",
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        email_address: email,
-        status: "subscribed"
-    })
-})
-.then(res => {
-    if (res.status < 300) {
-        toast('تم الاشتراك بنجاح ✅');
-        const btn = document.getElementById('subscribeBtn');
-        btn.textContent = '✅ Done';
-        btn.classList.add('success');
-        setTimeout(() => {
-            btn.textContent = 'Join';
-            btn.classList.remove('success');
-        }, 1200);
-        input.value = '';
+  // تعطيل مؤقت للزر
+  btn.disabled = true;
+
+  try{
+    const res = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email })
+    });
+
+    let data = {};
+    try { data = await res.json(); } catch(e){}
+
+    if (res.ok && (data.success === true)) {
+      toast('تم الاشتراك بنجاح ✅');
+      btn.textContent = '✅ Done';
+      btn.classList.add('success');
+      input.value = '';
+      setTimeout(() => {
+        btn.textContent = 'Join';
+        btn.classList.remove('success');
+      }, 1200);
     } else {
-        toast('❌ لم يتم الاشتراك، حاول مرة أخرى');
+      const msg = data?.error || data?.message || 'تعذّر الاشتراك حالياً، حاول لاحقاً';
+      toast('⚠ ' + msg);
     }
-})
-.catch(err => {
-    console.error(err);
+  } catch(e){
+    console.error(e);
     toast('⚠ خطأ في الاتصال، حاول لاحقاً');
+  } finally {
+    btn.disabled = false;
+  }
 });
 
 
@@ -1027,7 +1031,6 @@ setTimeout(() => {
   btn.classList.remove('success');
 }, 1200);
 
-  });
   </script>
 <script>
   const PRODUCTS = [
